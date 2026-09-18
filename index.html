@@ -268,9 +268,16 @@ function toast(msg, ms = 3200) {
   $("#toasts").appendChild(el);
   setTimeout(() => { el.classList.add("sai"); setTimeout(() => el.remove(), 420); }, ms);
 }
-function modal({ titulo, html, botoes = [], fecharFora = true }) {
+
+/* Contador global de modais: garante que só limpamos o HTML do modal
+   que efetivamente fechou — e não o de um modal novo aberto em seguida. */
+let modalSeq = 0;
+
+function modal({ titulo, html, botoes = [], fecharFora = true, onMount }) {
   return new Promise(resolve => {
     const root = $("#modalRoot"), caixa = $("#modalCaixa");
+    const seq = ++modalSeq;
+
     caixa.innerHTML = `
       <h3 class="titulo text-2xl font-bold mb-3">${titulo}</h3>
       <div class="text-[15px] leading-relaxed" style="color:var(--ink)">${html}</div>
@@ -278,17 +285,34 @@ function modal({ titulo, html, botoes = [], fecharFora = true }) {
         ${botoes.map((b, i) => `<button data-i="${i}" class="btn ${b.classe || "btn-s"}">${b.texto}</button>`).join("")}
       </div>`;
     root.classList.add("aberto");
+
+    const fora = e => { if (e.target === root && fecharFora) fechar(null); };
+
+    // ⚠️ ORDEM IMPORTANTE: resolve() PRIMEIRO, limpa depois (setTimeout 0).
+    // Isso garante que o caller do `await modal(...)` consiga ler inputs
+    // que ainda estão no DOM. Só limpamos se um novo modal não abriu.
     const fechar = val => {
       root.classList.remove("aberto");
-      caixa.innerHTML = "";
       root.removeEventListener("click", fora);
       resolve(val);
+      setTimeout(() => {
+        if (seq === modalSeq) caixa.innerHTML = "";
+      }, 0);
     };
-    const fora = e => { if (e.target === root && fecharFora) fechar(null); };
+
+    // Permite que quem chamou conecte eventos internos do modal
+    // enquanto ele ainda está aberto (chips, cartas, emojis etc.).
+    if (typeof onMount === "function") {
+      try { onMount(caixa, fechar); } catch (e) {}
+    }
+
     root.addEventListener("click", fora);
-    $$("button[data-i]", caixa).forEach(b => b.addEventListener("click", () => fechar(botoes[+b.dataset.i].valor)));
+    $$("button[data-i]", caixa).forEach(b =>
+      b.addEventListener("click", () => fechar(botoes[+b.dataset.i].valor))
+    );
   });
 }
+
 const confirmar = async (titulo, texto) =>
   (await modal({ titulo, html: `<p>${texto}</p>`, botoes: [
       { texto: "Cancelar", valor: false, classe: "btn-s" },
@@ -474,7 +498,6 @@ async function registrarResultado(jogo, vencedor, empatou) {
     if (vencedor) campos[`vitorias.${jogo}`] = increment(1);
     await updateDoc(refPerfil(vencedor || S.usuario), campos);
     if (empatou) {
-      // empate conta partida para todos os envolvidos
       for (const j of (S.sala?.jogadores || [])) {
         if (j !== S.usuario) await updateDoc(refPerfil(j), { total_partidas: increment(1) });
       }
@@ -638,6 +661,9 @@ async function configuracaoInicial(nome) {
     ]
   });
   if (r !== "ok") return;
+  // O modal já resolveu a Promise, mas o innerHTML ainda está intacto
+  // (a limpeza acontece no próximo tick, via setTimeout 0). Por isso
+  // conseguimos ler os inputs abaixo com segurança.
   const pin = ($("#cfgPin")?.value || "").trim();
   if (!/^\d{4}$/.test(pin)) { toast("O PIN precisa ter exatamente 4 dígitos"); return; }
   const apelidos = {};
@@ -688,7 +714,6 @@ function renderHome() {
     (() => { const p = S.perfis[n].ultima_vez_online; if (!p) return true;
       const ms = p.toMillis ? p.toMillis() : p; return agora() - ms > 2 * 86400000; })());
 
-  // última vitória registrada recentemente (cantinho dos irmãos)
   const ultimaVitoria = S._ultimaVitoria;
 
   $("#conteudo").innerHTML = `
@@ -760,7 +785,7 @@ async function escolherModo(jogo) {
     html: `
       <p class="mb-3" style="color:var(--ink2)">${esc(g.descricaoLonga || g.descricao)}</p>
       <p class="font-bold text-sm mb-2">Quem vai jogar? (até ${max})</p>
-      <div class="flex flex-wrap gap-2" id="escolhidos">
+      <div class="flex flex-wrap gap-2">
         ${[S.usuario, ...outros].map(n => `
           <button data-p="${n}" class="chip" style="${n === S.usuario ? `background:${corDe(n)};color:#fff;border-color:${corDe(n)}` : ""}">
             ${emojiDe(n)} ${esc(nomeDe(n))}
@@ -770,20 +795,26 @@ async function escolherModo(jogo) {
     botoes: [
       { texto: "Cancelar", valor: null, classe: "btn-s" },
       { texto: "Criar mesa 🎲", valor: "ok", classe: "btn-p" }
-    ]
+    ],
+    // Conecta os cliques nos chips ENQUANTO o modal está aberto.
+    onMount(caixa) {
+      caixa.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => {
+        const n = b.dataset.p;
+        if (n === S.usuario) return;
+        if (selecionados.has(n)) {
+          selecionados.delete(n);
+          b.style.background = ""; b.style.color = ""; b.style.borderColor = "";
+        } else if (selecionados.size < max) {
+          selecionados.add(n);
+          b.style.background = corDe(n); b.style.color = "#fff"; b.style.borderColor = corDe(n);
+        } else {
+          toast(`Máximo de ${max} jogadores nesse jogo`);
+        }
+      }));
+    }
   });
   if (r !== "ok") return;
 
-  $$("#escolhidos [data-p]").forEach(b => b.addEventListener("click", () => {
-    const n = b.dataset.p;
-    if (n === S.usuario) return;
-    if (selecionados.has(n)) { selecionados.delete(n); b.style.background = ""; b.style.color = ""; b.style.borderColor = ""; }
-    else if (selecionados.size < max) { selecionados.add(n); b.style.background = corDe(n); b.style.color = "#fff"; b.style.borderColor = corDe(n); }
-    else toast(`Máximo de ${max} jogadores nesse jogo`);
-  }));
-  // aguarda o usuário decidir os companheiros e só então cria
-  // (a criação acontece quando o modal fecha; recriamos com a seleção atual)
-  // Para manter simples, criamos com a seleção inicial e ele entra sozinho.
   const jogadores = [S.usuario, ...outros.filter(n => selecionados.has(n))].slice(0, max);
   try {
     const id = await criarSala(jogo, jogadores.length ? jogadores : [S.usuario]);
@@ -840,17 +871,17 @@ function renderSalas() {
              <div class="grid grid-cols-2 gap-2">
                ${JOGOS_LISTA.map(j => `<button data-nj="${j}" class="btn btn-s py-3">${JOGOS[j].icone} ${esc(JOGOS[j].nome)}</button>`).join("")}
              </div>`,
-      botoes: [{ texto: "Fechar", valor: null, classe: "btn-g" }]
-    }).then(v => {
-      // nada: os botões internos tratam
+      botoes: [{ texto: "Fechar", valor: null, classe: "btn-g" }],
+      onMount(caixa, fechar) {
+        caixa.querySelectorAll("[data-nj]").forEach(b => b.addEventListener("click", () => {
+          const jogo = b.dataset.nj;
+          fechar(null);
+          // pequeno delay pra garantir que a limpeza do modal anterior
+          // não interfira no novo modal que será aberto por escolherModo.
+          setTimeout(() => escolherModo(jogo), 10);
+        }));
+      }
     });
-    setTimeout(() => {
-      $$("[data-nj]").forEach(b => b.addEventListener("click", () => {
-        $("#modalRoot").classList.remove("aberto");
-        $("#modalCaixa").innerHTML = "";
-        escolherModo(b.dataset.nj);
-      }));
-    }, 30);
   };
 }
 
@@ -878,14 +909,12 @@ function ouvirSalaAtual() {
     const nova = { id: snap.id, ...snap.data() };
     S.sala = nova;
 
-    // é minha vez?
     if (anterior && anterior.turno !== nova.turno && nova.turno === S.usuario && nova.status === "jogando") {
       tocarSom("playYourTurn");
       vibrar([40, 60, 40]);
       toast(`É sua vez, ${nomeDe(S.usuario)}! ${emojiDe(S.usuario)}`);
       notificar("É sua vez!", `Sua vez no ${JOGOS[nova.jogo].nome}, ${nomeDe(S.usuario)} ${emojiDe(S.usuario)}`);
     }
-    // alguém venceu
     if (anterior && !anterior.vencedor && nova.vencedor) {
       tocarSom("playVictory"); confete(1.3);
       vibrar([60, 80, 60, 80, 120]);
@@ -1008,13 +1037,18 @@ function renderTelaJogo() {
       titulo: "Zoação carinhosa 😜",
       html: `<p class="mb-3" style="color:var(--ink2)">Escolhe um emoji pra aparecer na tela dos irmãos por 2 segundos.</p>
              <div class="flex flex-wrap gap-2">${APP_CONFIG.zoacoes.map(z => `<button class="btn btn-s text-2xl" data-z="${z}">${z}</button>`).join("")}</div>`,
-      botoes: [{ texto: "Fechar", valor: null, classe: "btn-g" }]
+      botoes: [{ texto: "Fechar", valor: null, classe: "btn-g" }],
+      onMount(caixa, fechar) {
+        caixa.querySelectorAll("[data-z]").forEach(b => b.addEventListener("click", () => {
+          const z = b.dataset.z;
+          fechar(null);
+          setTimeout(() => {
+            emojiVoador(z);
+            tocarSom("playChatMessage");
+          }, 10);
+        }));
+      }
     });
-    setTimeout(() => $$("[data-z]").forEach(b => b.addEventListener("click", () => {
-      $("#modalRoot").classList.remove("aberto"); $("#modalCaixa").innerHTML = "";
-      emojiVoador(b.dataset.z);
-      tocarSom("playChatMessage");
-    })), 30);
   };
   $("#btnSairMesa").onclick = async () => {
     if (!await confirmar("Sair da mesa", "Você vai sair da sala. A partida continua pra quem ficar.")) return;
@@ -1092,14 +1126,13 @@ JOGOS.velha = {
       vitorias: Object.fromEntries(jogadores.map(j => [j, 0])),
       historico: [],
       linhaVencedora: null,
-      fimRodada: null // 'X' | 'O' | 'empate'
+      fimRodada: null
     };
   },
   primeiroTurno(estado) { return estado.ordem[0]; },
   render(area, sala) {
     const e = sala.estado;
     const eu = S.usuario;
-    const meuSimbolo = e.simbolos?.[eu];
     const vez = sala.turno;
     const empate = e.fimRodada === "empate";
     const vencedorRodada = e.fimRodada && e.fimRodada !== "empate"
@@ -1138,7 +1171,6 @@ JOGOS.velha = {
         </div>
       </div>`;
 
-    // cliques
     $$("#tabVelha .cel").forEach(cel => cel.addEventListener("click", async () => {
       if (e.fimRodada || vez !== eu) { tocarSom("playErrorSound"); return; }
       const i = +cel.dataset.i;
@@ -1245,7 +1277,6 @@ JOGOS.dama = {
     const dirDe = idx => DIR_DAMA[e.modo === 2 ? (idx === 0 ? 0 : 2) : idx];
     const donosDoMeuTime = e.duplas
       ? meus.filter((_, i) => i % 2 === meuIndice % 2) : [eu];
-    const timeOposto = n => e.duplas ? (meus.indexOf(n) % 2 !== meuIndice % 2) : n !== eu;
 
     const selecionada = e.ultimoLance?.selecionada;
     const movs = selecionada ? movimentosDaPeca(e, selecionada[0], selecionada[1], dirDe(vezIdx)) : [];
@@ -1283,12 +1314,10 @@ JOGOS.dama = {
       const casa = e.casas[l][c];
       const dir = dirDe(vezIdx);
 
-      // clicar num destino válido
       if (selecionada) {
         const mov = movs.find(m => m.para[0] === l && m.para[1] === c);
         if (mov) return executarMovimentoDama(sala, e, mov, dir);
       }
-      // selecionar peça própria
       if (casa && donosDoMeuTime.includes(casa.d)) {
         if (e.pecaObrigatoria && (e.pecaObrigatoria[0] !== l || e.pecaObrigatoria[1] !== c)) {
           tocarSom("playErrorSound"); toast("Você precisa continuar a captura com a mesma peça 🔴"); return;
@@ -1305,16 +1334,13 @@ JOGOS.dama = {
   }
 };
 
-/** Direção (dr,dc) de uma peça conforme o índice do jogador no modo atual. */
 function dirsJogador(idx, modo) { return DIR_DAMA[modo === 2 ? (idx === 0 ? 0 : 2) : idx]; }
 
-/** Movimentos possíveis de uma peça (com ou sem captura). */
 function movimentosDaPeca(e, l, c, dir) {
   const casa = e.casas[l][c]; if (!casa) return [];
   const out = [];
   const sentidos = casa.r ? [[1,1],[1,-1],[-1,1],[-1,-1]] : [dir, [-dir[0], -dir[1]]];
   for (const [dr, dc] of sentidos) {
-    // movimento simples
     const l1 = l + dr, c1 = c + dc;
     if (casa.r) {
       let ll = l1, cc = c1;
@@ -1322,7 +1348,6 @@ function movimentosDaPeca(e, l, c, dir) {
     } else if (dentro(l1, c1) && !e.casas[l1][c1] && dirValida(dir, dr, dc, false)) {
       out.push({ de: [l, c], para: [l1, c1], captura: false });
     }
-    // captura
     if (casa.r) {
       let ll = l + dr, cc = c + dc;
       while (dentro(ll, cc) && !e.casas[ll][cc]) { ll += dr; cc += dc; }
@@ -1342,8 +1367,8 @@ function movimentosDaPeca(e, l, c, dir) {
 }
 const dentro = (l, c) => l >= 0 && l < 8 && c >= 0 && c < 8;
 function dirValida(dir, dr, dc, captura) {
-  if (dir[0] === dr && dir[1] === dc) return true;           // frente
-  if (captura && -dir[0] === dr && -dir[1] === dc) return true; // captura pra trás
+  if (dir[0] === dr && dir[1] === dc) return true;
+  if (captura && -dir[0] === dr && -dir[1] === dc) return true;
   return false;
 }
 function todasCapturas(e, donos, dir) {
@@ -1369,7 +1394,6 @@ async function executarMovimentoDama(sala, e, mov, dir) {
     semCaptura = (e.semCaptura || 0) + 1;
     tocarSom("playPieceMove"); vibrar(20);
   }
-  // promoção (só no modo 2 jogadores)
   if (!e.duplas) {
     const idx = sala.jogadores.indexOf(peca.d);
     const linhaFinal = idx === 0 ? 7 : 0;
@@ -1378,7 +1402,6 @@ async function executarMovimentoDama(sala, e, mov, dir) {
 
   const novo = { ...e, casas, semCaptura, ultimoLance: { de: mov.de, para: mov.para, captura: mov.captura || null } };
 
-  // continuação de captura com a mesma peça
   const continuacoes = mov.captura ? movimentosDaPeca(novo, mov.para[0], mov.para[1], dir).filter(m => m.captura) : [];
   if (continuacoes.length && mov.captura) {
     novo.pecaObrigatoria = mov.para;
@@ -1389,8 +1412,6 @@ async function executarMovimentoDama(sala, e, mov, dir) {
   }
   novo.pecaObrigatoria = null;
 
-  // condições de fim
-  const adversarios = sala.jogadores.filter(n => !timeDe(n, sala));
   const restantes = novo.casas.flat().filter(p => p && timeDe(p.d, sala) !== timeDe(sala.turno, sala));
   const meusRestantes = novo.casas.flat().filter(p => p && timeDe(p.d, sala) === timeDe(sala.turno, sala));
 
@@ -1410,7 +1431,6 @@ async function executarMovimentoDama(sala, e, mov, dir) {
     return finalizarDama(sala, sala.turno, novo, `${nomeDe(proximo)} ficou sem jogadas!`);
   }
 
-  // empate: 20 lances sem captura ou dama × dama
   const pecasRestantes = novo.casas.flat().filter(Boolean);
   const soDamas = pecasRestantes.every(p => p.r);
   if (novo.semCaptura >= 20 || (soDamas && pecasRestantes.length <= 2)) {
@@ -1427,9 +1447,8 @@ function timeDe(nome, sala) {
   return i % 2 === 0 ? "A" : "B";
 }
 function finalizarDama(sala, vencedor, estado, motivo) {
-  const timeVencedor = timeDe(vencedor, sala);
   return salvarSala({
-    estado, vencedor: sala.estado.duplas ? vencedor : vencedor, empate: false, status: "finalizada"
+    estado, vencedor: vencedor, empate: false, status: "finalizada"
   }).then(() => {
     toast(motivo);
     confete(1.2);
@@ -1453,7 +1472,6 @@ JOGOS.domino = {
     const porJogador = 7;
     for (let i = 0; i < jogadores.length * porJogador; i++) maos[jogadores[i % jogadores.length]].push(pecas[i].id);
     const monte = pecas.slice(jogadores.length * porJogador).map(p => p.id);
-    // quem começa: maior peça dupla
     let iniciante = jogadores[0], melhor = -1;
     jogadores.forEach(n => maos[n].forEach(pid => {
       const p = pecas.find(x => x.id === pid);
@@ -1520,12 +1538,7 @@ JOGOS.domino = {
       maos[eu] = [...maos[eu], id];
       tocarSom("playPieceMove"); vibrar(20);
       const novo = { ...e, maos, monte };
-      const p = pecaDe(id);
-      if (!podeJogar(p, pontas)) {
-        await salvarSala({ estado: novo });
-      } else {
-        await salvarSala({ estado: novo });
-      }
+      await salvarSala({ estado: novo });
     };
     const bp = $("#domPassar");
     if (bp) bp.onclick = async () => {
@@ -1629,16 +1642,14 @@ JOGOS.ludo = {
   descricaoLonga: "Só sai com 6. Casas ⭐ são seguras. Leve os 4 peões ao centro!",
   novoEstado(jogadores) {
     const peoes = {};
-    jogadores.forEach(n => peoes[n] = [-1, -1, -1, -1]); // -1 = na base
+    jogadores.forEach(n => peoes[n] = [-1, -1, -1, -1]);
     return { peoes, dado: null, ultimoDado: null, jogando: null, aviso: null };
   },
   primeiroTurno(estado, jogadores) { return jogadores[0]; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const minhaVez = sala.turno === eu;
-    const idx = sala.jogadores.indexOf(eu);
 
-    // monta o tabuleiro
     let html = `<div class="ludo-wrap" id="ludoWrap">`;
     for (let r = 0; r < 15; r++) for (let c = 0; c < 15; c++) {
       const base = baseDeCelula(r, c);
@@ -1646,7 +1657,6 @@ JOGOS.ludo = {
         html += `<div class="ludo-cel" style="left:${c * 100 / 15}%;top:${r * 100 / 15}%;background:${corDe(sala.jogadores[base])}22"></div>`;
       }
     }
-    // caminho
     LUDO_PATH.forEach(([r, c], i) => {
       const dono = LUDO_START.indexOf(i);
       const seguro = LUDO_SEGURO.has(i);
@@ -1655,15 +1665,12 @@ JOGOS.ludo = {
         border:1px solid var(--linha);border-radius:3px">
         ${seguro ? `<span class="ludo-estrela">★</span>` : ""}</div>`;
     });
-    // colunas de chegada
     LUDO_HOME.forEach((col, p) => col.forEach(([r, c]) => {
       html += `<div class="ludo-cel" style="left:${c * 100 / 15}%;top:${r * 100 / 15}%;
         background:${corDe(sala.jogadores[p])}44;border:1px solid var(--linha);border-radius:3px"></div>`;
     }));
-    // centro
     html += `<div class="ludo-cel" style="left:${7 * 100 / 15}%;top:${7 * 100 / 15}%;width:${100 / 15}%;height:${100 / 15}%;
       background:var(--gold);border-radius:4px;font-size:12px">🏁</div>`;
-    // peões
     sala.jogadores.forEach((n, p) => {
       e.peoes[n].forEach((passo, k) => {
         const [r, c] = posicaoPino(n, p, passo, k, e, sala);
@@ -1704,7 +1711,6 @@ JOGOS.ludo = {
       el.classList.add("dado-girando");
       el.textContent = dado;
       setTimeout(() => el.classList.remove("dado-girando"), 700);
-      // verifica se há jogada possível
       const possiveis = peoesJogaveis(sala, e, eu, dado);
       vibrar(30);
       await salvarSala({
@@ -1742,15 +1748,12 @@ function posicaoPino(nome, p, passo, k, e, sala) {
   if (passo >= 51) {
     if (passo === 56) return [7, 7];
     const h = LUDO_HOME[p][passo - 51];
-    // desloca levemente para não sobrepor pinos no mesmo lugar
-    const ocupantes = sala.jogadores.flatMap(nn => e.peoes[nn]).filter(x => x === passo).length;
     return h;
   }
   const i = (LUDO_START[p] + passo) % 52;
   return LUDO_PATH[i];
 }
 function peoesJogaveis(sala, e, nome, dado) {
-  const p = sala.jogadores.indexOf(nome);
   const out = [];
   e.peoes[nome].forEach((passo, k) => {
     if (passo === 56) return;
@@ -1765,7 +1768,6 @@ async function moverPinoLudo(sala, k, dado) {
   const depois = antes === -1 ? 0 : antes + dado;
   e.peoes[S.usuario][k] = depois;
 
-  // captura
   const p = sala.jogadores.indexOf(S.usuario);
   let capturou = false;
   if (depois <= 50) {
@@ -1787,7 +1789,6 @@ async function moverPinoLudo(sala, k, dado) {
   if (capturou) { tocarSom("playCapture"); vibrar([50, 40, 50]); }
   else { tocarSom("playPieceMove"); vibrar(20); }
 
-  // vitória
   if (e.peoes[S.usuario].every(x => x === 56)) {
     confete(1.5); tocarSom("playVictory");
     return salvarSala({ estado: e, vencedor: S.usuario, empate: false, status: "finalizada" });
@@ -1841,7 +1842,7 @@ JOGOS.xadrez = {
     const minhaCor = e.cores.w === eu ? "w" : "b";
     const minhaVez = sala.turno === eu && !sala.vencedor;
     const movs = e.selecionada !== null ? movimentosLegais(e).filter(m => m.de === e.selecionada) : [];
-    const emXeque = estaEmXeque(e, e.cores.w === sala.turno ? corDoTurno(e, sala.turno) : corDoTurno(e, sala.turno));
+    const emXeque = estaEmXeque(e, corDoTurno(e, sala.turno));
 
     area.innerHTML = `
       <div class="card p-3">
@@ -1897,7 +1898,6 @@ JOGOS.xadrez = {
       await salvarSala({ estado: { ...e, pedidoDesfazer: eu } });
       toast("Pedido enviado pro adversário 🤝");
     };
-    // pedido de desfazer pendente
     if (e.pedidoDesfazer && e.pedidoDesfazer !== eu && !sala.vencedor) {
       setTimeout(async () => {
         const ok = await confirmar("Desfazer lance", `${nomeDe(e.pedidoDesfazer)} quer desfazer o último lance. Aceitar?`);
@@ -1921,9 +1921,7 @@ JOGOS.xadrez = {
   }
 };
 const corDoTurno = (e, nome) => e.cores.w === nome ? "w" : "b";
-const pecaDe = (e, i) => e.casas[i];
 
-/** Gera movimentos pseudo-legais para uma cor. */
 function movimentosPseudo(e, cor) {
   const out = [];
   for (let i = 0; i < 64; i++) {
@@ -2007,15 +2005,15 @@ function aplicarMov(e, mov) {
     ? (mov.de + mov.para) / 2 : null;
   return { ...e, casas, roque, enPassant };
 }
+let corPendente = "w";
+function corTurnoDe(e) { return corPendente; }
 function movimentosLegais(e) {
-  const cor = e.casas.every(x => true) ? corTurnoDe(e) : "w";
+  const cor = corTurnoDe(e);
   return movimentosPseudo(e, cor).filter(m => {
     const depois = aplicarMov(e, m);
     return !estaEmXeque(depois, cor);
   });
 }
-let corPendente = "w";
-function corTurnoDe(e) { return corPendente; }
 function estaEmXeque(e, cor) {
   const rei = e.casas.indexOf(cor + "K");
   if (rei < 0) return false;
@@ -2023,8 +2021,6 @@ function estaEmXeque(e, cor) {
 }
 function casaAtacada(e, casa, corDefensora) {
   const adversaria = corDefensora === "w" ? "b" : "w";
-  // gera ataques sem considerar roque (evita recursão)
-  const salvoRoque = e.roque;
   const eSem = { ...e, roque: { K: false, Q: false, k: false, q: false } };
   return movimentosPseudo(eSem, adversaria).some(m => m.para === casa);
 }
@@ -2034,7 +2030,6 @@ async function executarLanceXadrez(sala, e, mov) {
   const de = nomeCasa(mov.de), para = nomeCasa(mov.para);
   const captura = e.casas[mov.para] || mov.enPassant;
 
-  // promoção: se houver escolha, pergunta
   let escolha = mov.promocao || null;
   if (mov.promocao) {
     const r = await modal({
@@ -2044,7 +2039,13 @@ async function executarLanceXadrez(sala, e, mov) {
                ${["Q","R","B","N"].map(p => `<button data-prom="${p}" class="btn btn-s px-4 py-2">${PECAS_UNI[cor + p]}</button>`).join("")}
              </div>`,
       botoes: [{ texto: "Dama", valor: "Q", classe: "btn-p" }],
-      fecharFora: false
+      fecharFora: false,
+      // Cada botão de peça fecha o modal com o valor escolhido.
+      onMount(caixa, fechar) {
+        caixa.querySelectorAll("[data-prom]").forEach(b => b.addEventListener("click", () => {
+          fechar(b.dataset.prom);
+        }));
+      }
     });
     escolha = r || "Q";
     mov = { ...mov, promocao: escolha };
@@ -2153,7 +2154,6 @@ JOGOS.pifpaf = {
       if (doLixo) { if (!lixo.length) return; carta = lixo.pop(); }
       else {
         if (!monte.length) {
-          // recicla o lixo, mantendo a última carta
           const topo = lixo.pop();
           monte.push(...lixo.splice(0, lixo.length).sort(() => Math.random() - .5));
           lixo.push(topo);
@@ -2207,10 +2207,8 @@ function cartaHTML(c) {
     <span class="canto b">${c.r === "JOKER" ? "★" : c.r}${c.r === "JOKER" ? "" : c.n}</span>
   </div>`;
 }
-/** Verifica se 9 cartas formam 3 trincas/sequências (com curingas). */
 function acharCombinacao(cartas) {
   if (cartas.length === 10) {
-    // tenta remover cada uma
     for (let i = 0; i < cartas.length; i++) {
       const resto = cartas.filter((_, j) => j !== i);
       const r = particionar(resto);
@@ -2222,7 +2220,6 @@ function acharCombinacao(cartas) {
 }
 function particionar(cartas) {
   if (cartas.length !== 9) return null;
-  const idx = [...cartas.keys()];
   const resultado = [];
   const combinar = (restantes, grupos) => {
     if (!restantes.length) { if (grupos.length === 3) { resultado.push(...grupos); return true; } return false; }
@@ -2244,8 +2241,8 @@ function grupoValido(g) {
   const jokers = g.filter(c => c.r === "JOKER").length;
   const reais = g.filter(c => c.r !== "JOKER");
   if (jokers === 3) return true;
-  if (reais.length && reais.every(c => c.r === reais[0].r)) return true; // trinca
-  if (reais.length && reais.every(c => c.n === reais[0].n)) {             // sequência
+  if (reais.length && reais.every(c => c.r === reais[0].r)) return true;
+  if (reais.length && reais.every(c => c.n === reais[0].n)) {
     for (const mapa of [VALOR_RANK, { ...VALOR_RANK, A: 14 }]) {
       const vals = reais.map(c => mapa[c.r]).sort((a, b) => a - b);
       if (new Set(vals).size !== vals.length) continue;
@@ -2289,7 +2286,7 @@ JOGOS.vinteum = {
       maos: Object.fromEntries(jogadores.map(n => [n, []])),
       fichas: Object.fromEntries(jogadores.map(n => [n, 100])),
       apostas: Object.fromEntries(jogadores.map(n => [n, 0])),
-      fase: "apostas", // apostas | jogando | banca | fim
+      fase: "apostas",
       resultados: null,
       rodada: 1
     };
@@ -2364,7 +2361,6 @@ JOGOS.vinteum = {
       const apostas = { ...e.apostas, [eu]: v };
       const todos = sala.jogadores.every(n => apostas[n] > 0);
       if (!todos) { await salvarSala({ estado: { ...e, apostas } }); return; }
-      // distribui
       const baralho = baralho21();
       const maos = { ...e.maos };
       sala.jogadores.forEach(n => maos[n] = [baralho.pop(), baralho.pop()]);
@@ -2418,7 +2414,6 @@ async function passarVez21(e, sala, estourou) {
   if (proximo) {
     return salvarSala({ estado: e, turno: proximo });
   }
-  // vez da banca
   const baralho = [...e.baralho];
   const banca = [...e.banca];
   while (valorMao(banca) < 17 && baralho.length) banca.push(baralho.pop());
@@ -2534,7 +2529,6 @@ JOGOS.forca = {
       tocarSom(acertou ? "playPiecePlace" : "playErrorSound");
       vibrar(acertou ? 20 : [40, 40, 40]);
 
-      // vitória dos adivinhadores?
       const faltam = e.palavra.split("").filter(ch => ch !== " " && !letras.includes(ch));
       if (!faltam.length) {
         confete(1.2); tocarSom("playVictory");
@@ -2550,7 +2544,6 @@ JOGOS.forca = {
           vencedor: e.mestre, status: "finalizada"
         });
       }
-      // próximo adivinhador
       const lista = e.adivinhadores;
       const i = lista.indexOf(eu);
       const proximo = lista[(i + 1) % lista.length];
@@ -2588,7 +2581,6 @@ function svgForca(erros) {
    14. CHAT (comum a todos) — já integrado na tela de jogo
    ============================================================ */
 async function carregarChatGlobal() {
-  // usado pelo botão de chat no topo quando fora de uma sala
   if (!S.salaId) { toast("Entre numa mesa pra conversar 💬"); return; }
   S.chatAberto = !S.chatAberto;
   const painel = $("#chatPainel");
@@ -2600,7 +2592,6 @@ async function carregarChatGlobal() {
    ============================================================ */
 function renderPlacar() {
   const linhas = calcularPlacarGeral();
-  const seteDias = agora() - 7 * 86400000;
   $("#conteudo").innerHTML = `
   <div class="px-4 pb-28 pt-3 max-w-3xl mx-auto fadeIn">
     <h1 class="titulo text-3xl font-bold">Placar da família 🏆</h1>
@@ -2867,7 +2858,7 @@ function carregarPreferencias() {
 function ligarEventosGlobais() {
   $("#btnVoltar").onclick = () => {
     if (S.tela === "jogo") { fecharSala(); }
-    irPara(S.tela === "config" || S.tela === "placar" ? "home" : "home");
+    irPara("home");
   };
   $("#btnTema").onclick = () => {
     S.tema = S.tema === "escuro" ? "claro" : "escuro";
