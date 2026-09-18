@@ -18,13 +18,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
-/* ============================================================
-   ESTILOS — paleta calorosa, mobile-first, sem zoom/pull-to-refresh
-   ============================================================ */
 :root{
   --bg:#FBF7F0; --bg2:#F3ECE1; --card:#FFFFFF; --ink:#2B2733; --ink2:#6B6478;
   --gold:#D4A574; --linha:#E7DFD2; --sombra:0 6px 20px rgba(80,60,30,.08);
-  --douglas:#4A90D9; --danilo:#5E9B87; --giovanna:#E08AA6; --rebekah:#9B7BC9;
 }
 html.dark{
   --bg:#1A1823; --bg2:#211E2C; --card:#26222F; --ink:#F3EEE7; --ink2:#A9A2B8;
@@ -58,7 +54,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .dado-girando{animation:girar .7s ease-in-out}
 @keyframes flutuar{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1;transform:translateY(-10px) scale(1.2)}100%{transform:translateY(-90px) scale(1);opacity:0}}
 .emoji-voador{position:fixed;font-size:56px;pointer-events:none;z-index:9000;animation:flutuar 2s ease-out forwards}
-/* tabuleiros */
 .cel{display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:background .15s}
 .tab-velha{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:min(84vw,330px);aspect-ratio:1;margin:0 auto}
 .tab-velha .cel{background:var(--bg2);border-radius:14px;font-size:min(15vw,58px);font-weight:800;line-height:1}
@@ -69,13 +64,10 @@ input,textarea{user-select:text;-webkit-user-select:text}
 html.dark .clara{background:#8B8377}html.dark .escura{background:#5B4E42}
 .sel{box-shadow:inset 0 0 0 3px var(--gold)}
 .destino{box-shadow:inset 0 0 0 3px rgba(212,165,116,.85)}
-.peca-x{color:var(--douglas)}.peca-o{color:var(--giovanna)}
-/* ludo */
 .ludo-wrap{position:relative;width:min(94vw,440px);aspect-ratio:1;margin:0 auto;border-radius:12px;overflow:hidden;border:2px solid var(--linha);background:var(--bg2)}
 .ludo-cel{position:absolute;width:6.6667%;height:6.6667%;display:flex;align-items:center;justify-content:center;font-size:min(3.4vw,15px)}
 .ludo-pino{width:76%;height:76%;border-radius:50%;border:2px solid rgba(255,255,255,.85);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .ludo-estrela{color:var(--gold);font-size:min(3.6vw,15px)}
-/* dominó */
 .peca-dom{display:flex;background:#FFFDF7;border:2px solid #3A3226;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.18);overflow:hidden}
 html.dark .peca-dom{background:#EDE6DA}
 .peca-dom.h{flex-direction:row}
@@ -83,7 +75,6 @@ html.dark .peca-dom{background:#EDE6DA}
 .peca-dom .divisor{width:2px;background:#3A3226}
 .pino{width:6px;height:6px;border-radius:50%;background:#3A3226;align-self:center;justify-self:center}
 .peca-dom.sel{outline:3px solid var(--gold)}
-/* cartas */
 .carta{width:58px;height:82px;border-radius:9px;background:#fff;border:1px solid #ccc;box-shadow:0 2px 6px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;position:relative;color:#222}
 .carta.verm{color:#C0392B}
 .carta.verso{background:linear-gradient(135deg,#9B7BC9,#4A90D9);border-color:#fff}
@@ -91,17 +82,14 @@ html.dark .peca-dom{background:#EDE6DA}
 .carta .canto.b{top:auto;bottom:3px;left:auto;right:5px;transform:rotate(180deg)}
 .carta .centro{font-size:26px}
 .carta.sel{outline:3px solid var(--gold);transform:translateY(-6px)}
-/* chat */
 #chatPainel{position:fixed;right:10px;bottom:calc(70px + env(safe-area-inset-bottom));width:min(92vw,340px);max-height:60vh;display:none;flex-direction:column;z-index:800}
 #chatPainel.aberto{display:flex}
 .chat-msgs{overflow-y:auto;max-height:38vh;display:flex;flex-direction:column;gap:6px;padding:10px}
 .chat-msg{padding:6px 10px;border-radius:12px;background:var(--bg2);font-size:13px;max-width:88%;word-break:break-word}
 .chat-msg.eu{align-self:flex-end}
-/* toasts */
 #toasts{position:fixed;top:calc(8px + env(safe-area-inset-top));left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:9500;pointer-events:none}
 .toast{background:var(--card);color:var(--ink);border:1px solid var(--linha);box-shadow:var(--sombra);padding:8px 16px;border-radius:999px;font-size:14px;font-weight:700;animation:popIn .25s both;transition:opacity .4s,transform .4s}
 .toast.sai{opacity:0;transform:translateY(-10px)}
-/* modal */
 #modalRoot{position:fixed;inset:0;background:rgba(20,15,10,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:9600}
 #modalRoot.aberto{display:flex}
 #modalCaixa{background:var(--card);border-radius:20px;max-width:420px;width:100%;max-height:86vh;overflow-y:auto;padding:20px;animation:popIn .28s both}
@@ -133,34 +121,16 @@ html.dark .peca-dom{background:#EDE6DA}
 /* ============================================================
    MESA DA FAMÍLIA — app de jogos em família (arquivo único)
    ------------------------------------------------------------
-   COMO PUBLICAR (GitHub Pages + Firebase):
-   1) Crie um projeto no Firebase Console (console.firebase.google.com).
-   2) Authentication → Sign-in method → ative o provedor "Anônimo".
-   3) Firestore Database → criar banco em modo produção e publicar:
-        rules_version = '2';
-        service cloud.firestore {
-          match /databases/{database}/documents {
-            match /{document=**} {
-              allow read, write: if request.auth != null;
-            }
-          }
-        }
-   4) Configurações do Projeto → Seus apps → Web → copie as credenciais
-      e substitua o objeto firebaseConfig logo abaixo.
-   5) Suba este index.html no GitHub Pages (branch main, raiz).
-   6) Abra a URL, escolha quem você é e crie o PIN da família (4 dígitos).
-   7) No celular: Compartilhar → "Adicionar à Tela de Início" (vira app).
+   Publicar: GitHub Pages + Firebase (ver instruções no fim do <script>)
    ============================================================ */
 
-/* ============================================================
-   1. FIREBASE INIT
-   ============================================================ */
+/* 1. FIREBASE INIT */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc,
+  doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs,
   query, where, orderBy, limit, onSnapshot, serverTimestamp, increment
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -180,12 +150,10 @@ const db   = initializeFirestore(app, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
 });
 
-/* ============================================================
-   APP_CONFIG — tudo que é "personalidade" do app fica aqui
-   ============================================================ */
+/* 2. CONFIG */
 const APP_CONFIG = {
   nome: "Mesa da Família",
-  versao: "1.0.0",
+  versao: "1.0.1",
   jogadores: {
     douglas:  { nome: "Douglas",  emoji: "💙", cor: "#4A90D9" },
     danilo:   { nome: "Danilo",   emoji: "💚", cor: "#5E9B87" },
@@ -222,9 +190,7 @@ const corDe  = n => (APP_CONFIG.jogadores[n]?.cor   || "#D4A574");
 const emojiDe= n => (APP_CONFIG.jogadores[n]?.emoji || "🎲");
 const nomeDe = n => (APP_CONFIG.jogadores[n]?.nome  || n);
 
-/* ============================================================
-   2. AUTENTICAÇÃO / SESSÃO / PIN
-   ============================================================ */
+/* 3. ESTADO GLOBAL */
 const S = {
   uid: null, usuario: null, perfil: null,
   perfis: {}, configFamilia: null,
@@ -232,10 +198,9 @@ const S = {
   som: true, notif: true, tema: "claro",
   unsubSala: null, unsubChat: null, unsubPerfis: null, unsubSalas: null,
   tela: "login", telaAnterior: "home", chatAberto: false,
-  salasCache: [], ultimoTurno: null
+  salasCache: [], ultimaVitoria: null
 };
 
-/* ---------- utilidades gerais ---------- */
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
@@ -260,24 +225,18 @@ const hojeChave = () => new Date().toISOString().slice(0, 10);
 const hashTexto = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; };
 const fraseDoDia = () => APP_CONFIG.frases[hashTexto(hojeChave()) % APP_CONFIG.frases.length];
 
-/* ---------- toasts e modais ---------- */
+/* 4. TOASTS E MODAIS */
 function toast(msg, ms = 3200) {
   const el = document.createElement("div");
-  el.className = "toast";
-  el.textContent = msg;
+  el.className = "toast"; el.textContent = msg;
   $("#toasts").appendChild(el);
   setTimeout(() => { el.classList.add("sai"); setTimeout(() => el.remove(), 420); }, ms);
 }
-
-/* Contador global de modais: garante que só limpamos o HTML do modal
-   que efetivamente fechou — e não o de um modal novo aberto em seguida. */
 let modalSeq = 0;
-
 function modal({ titulo, html, botoes = [], fecharFora = true, onMount }) {
   return new Promise(resolve => {
     const root = $("#modalRoot"), caixa = $("#modalCaixa");
     const seq = ++modalSeq;
-
     caixa.innerHTML = `
       <h3 class="titulo text-2xl font-bold mb-3">${titulo}</h3>
       <div class="text-[15px] leading-relaxed" style="color:var(--ink)">${html}</div>
@@ -285,40 +244,26 @@ function modal({ titulo, html, botoes = [], fecharFora = true, onMount }) {
         ${botoes.map((b, i) => `<button data-i="${i}" class="btn ${b.classe || "btn-s"}">${b.texto}</button>`).join("")}
       </div>`;
     root.classList.add("aberto");
-
     const fora = e => { if (e.target === root && fecharFora) fechar(null); };
-
-    // ⚠️ ORDEM IMPORTANTE: resolve() PRIMEIRO, limpa depois (setTimeout 0).
-    // Isso garante que o caller do `await modal(...)` consiga ler inputs
-    // que ainda estão no DOM. Só limpamos se um novo modal não abriu.
     const fechar = val => {
       root.classList.remove("aberto");
       root.removeEventListener("click", fora);
-      resolve(val);
-      setTimeout(() => {
-        if (seq === modalSeq) caixa.innerHTML = "";
-      }, 0);
+      resolve(val); // resolve PRIMEIRO — o caller lê os inputs ainda no DOM
+      setTimeout(() => { if (seq === modalSeq) caixa.innerHTML = ""; }, 0);
     };
-
-    // Permite que quem chamou conecte eventos internos do modal
-    // enquanto ele ainda está aberto (chips, cartas, emojis etc.).
-    if (typeof onMount === "function") {
-      try { onMount(caixa, fechar); } catch (e) {}
-    }
-
+    if (typeof onMount === "function") { try { onMount(caixa, fechar); } catch (e) {} }
     root.addEventListener("click", fora);
     $$("button[data-i]", caixa).forEach(b =>
       b.addEventListener("click", () => fechar(botoes[+b.dataset.i].valor))
     );
   });
 }
-
 const confirmar = async (titulo, texto) =>
   (await modal({ titulo, html: `<p>${texto}</p>`, botoes: [
       { texto: "Cancelar", valor: false, classe: "btn-s" },
       { texto: "Confirmar", valor: true, classe: "btn-p" }] })) === true;
 
-/* ---------- confete ---------- */
+/* 5. CONFETE E EMOJI VOADOR */
 function confete(forca = 1) {
   const cv = $("#confete"), ctx = cv.getContext("2d");
   cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio;
@@ -344,22 +289,16 @@ function confete(forca = 1) {
     else ctx.clearRect(0, 0, innerWidth, innerHeight);
   })();
 }
-
-/* ---------- emoji voador (zoação carinhosa) ---------- */
-function emojiVoador(emoji, alvo) {
+function emojiVoador(emoji) {
   const el = document.createElement("div");
-  el.className = "emoji-voador";
-  el.textContent = emoji;
+  el.className = "emoji-voador"; el.textContent = emoji;
   el.style.left = (30 + Math.random() * 40) + "%";
   el.style.bottom = "18%";
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2100);
-  if (alvo) enviarMensagem(`${emoji} (zoação carinhosa)`, true);
 }
 
-/* ============================================================
-   16. SONS — Web Audio API sintetizada (sem arquivos externos)
-   ============================================================ */
+/* 6. SONS */
 let audioCtx = null;
 const ctxAudio = () => (audioCtx ||= new (window.AudioContext || window.webkitAudioContext)());
 function nota(freq, dur, tipo = "sine", vol = .16, atraso = 0) {
@@ -388,9 +327,7 @@ const SONS = {
 };
 const tocarSom = nome => { try { SONS[nome]?.(); } catch (e) {} };
 
-/* ============================================================
-   3. FIRESTORE CRUD
-   ============================================================ */
+/* 7. FIRESTORE */
 const refPerfil = n => doc(db, "perfis", n);
 const refSala   = id => doc(db, "partidas", id);
 const refConfig = () => doc(db, "config", "familia");
@@ -401,11 +338,7 @@ async function lerConfigFamilia() {
   return S.configFamilia;
 }
 async function criarConfigFamilia(pin, apelidos) {
-  const dados = {
-    pin,
-    nomes: apelidos,
-    criado_em: serverTimestamp()
-  };
+  const dados = { pin, nomes: apelidos, criado_em: serverTimestamp() };
   await setDoc(refConfig(), dados);
   S.configFamilia = { ...dados, criado_em: { toMillis: () => agora() } };
 }
@@ -413,17 +346,11 @@ async function atualizarPin(novoPin) {
   await updateDoc(refConfig(), { pin: novoPin });
   S.configFamilia.pin = novoPin;
 }
-
-/** Garante que o documento do perfil existe; cria com os padrões da família. */
 async function garantirPerfil(nome) {
   const snap = await getDoc(refPerfil(nome));
   const base = {
-    nome,
-    apelido_exibido: nomeDe(nome),
-    emoji: emojiDe(nome),
-    cor: corDe(nome),
-    total_partidas: 0,
-    ultima_vez_online: serverTimestamp()
+    nome, apelido_exibido: nomeDe(nome), emoji: emojiDe(nome), cor: corDe(nome),
+    total_partidas: 0, ultima_vez_online: serverTimestamp()
   };
   if (!snap.exists()) {
     const vitorias = {}; JOGOS_LISTA.forEach(j => vitorias[j] = 0);
@@ -433,18 +360,17 @@ async function garantirPerfil(nome) {
   }
 }
 
-/** Cria uma sala nova e devolve o código. */
+/* 8. CRIAR / ENTRAR EM SALAS */
 async function criarSala(jogo, jogadores) {
   const id = gerarCodigo();
-  const estado = JOGOS[jogo].novoEstado(jogadores);
+  const def = JOGOS[jogo];
+  const pronto = jogadores.length >= def.minJogadores;
+  const estado = pronto ? def.novoEstado(jogadores) : {};
   await setDoc(refSala(id), {
-    jogo,
-    jogadores,
-    estado,
-    turno: JOGOS[jogo].primeiroTurno ? JOGOS[jogo].primeiroTurno(estado, jogadores) : jogadores[0],
-    vencedor: null,
-    empate: false,
-    status: "jogando",
+    jogo, jogadores, estado,
+    turno: pronto ? (def.primeiroTurno ? def.primeiroTurno(estado, jogadores) : jogadores[0]) : jogadores[0],
+    vencedor: null, empate: false,
+    status: pronto ? "jogando" : "aguardando",
     rodada: 1,
     placar_rodadas: Object.fromEntries(jogadores.map(j => [j, 0])),
     criada_por: S.usuario,
@@ -454,58 +380,73 @@ async function criarSala(jogo, jogadores) {
   return id;
 }
 
-/** Entra numa sala existente; adiciona o jogador se houver vaga. */
 async function entrarNaSala(salaId) {
   const snap = await getDoc(refSala(salaId));
   if (!snap.exists()) throw new Error("Sala não encontrada");
   const dados = snap.data();
   if (dados.status === "finalizada") throw new Error("Essa mesa já foi encerrada");
   const jog = dados.jogadores || [];
-  if (!jog.includes(S.usuario)) {
-    const max = JOGOS[dados.jogo].maxJogadores;
-    if (jog.length >= max) throw new Error("A mesa já está cheia");
-    const novos = [...jog, S.usuario];
+  if (jog.includes(S.usuario)) return salaId; // já estou na mesa
+
+  const def = JOGOS[dados.jogo];
+  if (jog.length >= def.maxJogadores) throw new Error("A mesa já está cheia");
+
+  const novos = [...jog, S.usuario];
+  // Se a partida ainda não começou de verdade, reinicializa o estado com
+  // todos os jogadores (evita estado quebrado em dama/xadrez/ludo).
+  if (!jogoIniciado(dados.jogo, dados.estado) || jog.length < def.minJogadores) {
+    const estado = def.novoEstado(novos);
+    await updateDoc(refSala(salaId), {
+      jogadores: novos,
+      estado,
+      turno: def.primeiroTurno ? def.primeiroTurno(estado, novos) : novos[0],
+      vencedor: null, empate: false,
+      status: "jogando",
+      placar_rodadas: Object.fromEntries(novos.map(j => [j, 0])),
+      atualizada_em: serverTimestamp()
+    });
+  } else {
     await updateDoc(refSala(salaId), { jogadores: novos, atualizada_em: serverTimestamp() });
   }
   return salaId;
 }
 
-/** Salva o estado da sala (merge raso de campos de topo). */
+/** Retorna true se a partida já teve algum lance (não deve ser reinicializada). */
+function jogoIniciado(jogo, e) {
+  if (!e) return false;
+  switch (jogo) {
+    case "velha":  return (e.historico?.length || 0) > 0 || (e.tabuleiro || []).some(x => x);
+    case "dama":   return !!e.ultimoLance || (e.semCaptura || 0) > 0;
+    case "domino": return (e.mesa?.length || 0) > 0;
+    case "ludo":   return Object.values(e.peoes || {}).some(arr => arr.some(x => x !== -1));
+    case "xadrez": return (e.historico?.length || 0) > 0;
+    case "pifpaf": return (e.lixo?.length || 0) > 1 ||
+                          Object.values(e.maos || {}).some(m => m.length === 10);
+    case "vinteum":return e.fase && e.fase !== "apostas";
+    case "forca":  return !!e.palavra;
+  }
+  return false;
+}
+
 async function salvarSala(dados) {
   if (!S.salaId) return;
   await updateDoc(refSala(S.salaId), { ...dados, atualizada_em: serverTimestamp() });
 }
-async function salvarEstadoSala(salaId, estadoNovo, extras = {}) {
-  await updateDoc(refSala(salaId), { estado: estadoNovo, ...extras, atualizada_em: serverTimestamp() });
-}
-
-/** Envia mensagem no chat da sala atual. */
 async function enviarMensagem(texto, silencioso = false) {
   if (!S.salaId || !texto.trim()) return;
   await addDoc(collection(db, "chat"), {
-    sala_id: S.salaId,
-    autor: S.usuario,
-    texto: texto.trim().slice(0, 200),
-    enviado_em: serverTimestamp()
+    sala_id: S.salaId, autor: S.usuario,
+    texto: texto.trim().slice(0, 200), enviado_em: serverTimestamp()
   });
   if (!silencioso) tocarSom("playChatMessage");
 }
-
-/** Registra vitória/partida no perfil. */
-async function registrarResultado(jogo, vencedor, empatou) {
+async function registrarResultado(jogo, vencedor) {
   try {
     const campos = { total_partidas: increment(1), ultima_vez_online: serverTimestamp() };
     if (vencedor) campos[`vitorias.${jogo}`] = increment(1);
     await updateDoc(refPerfil(vencedor || S.usuario), campos);
-    if (empatou) {
-      for (const j of (S.sala?.jogadores || [])) {
-        if (j !== S.usuario) await updateDoc(refPerfil(j), { total_partidas: increment(1) });
-      }
-    }
-  } catch (e) { /* silencioso: placar é secundário */ }
+  } catch (e) {}
 }
-
-/** Calcula o placar geral a partir dos perfis. */
 function calcularPlacarGeral() {
   const linhas = NOMES.map(n => {
     const p = S.perfis[n] || {};
@@ -517,9 +458,16 @@ function calcularPlacarGeral() {
   return linhas;
 }
 
-/* ============================================================
-   4. ESTADO GLOBAL — listeners e navegação
-   ============================================================ */
+/** ⚠️ ESSA FUNÇÃO ESTAVA FALTANDO. É usada por todos os jogos com turnos. */
+function proximoTurno(sala) {
+  const jog = sala.jogadores || [];
+  if (!jog.length) return null;
+  const i = jog.indexOf(sala.turno);
+  if (i < 0) return jog[0];
+  return jog[(i + 1) % jog.length];
+}
+
+/* 9. NAVEGAÇÃO */
 function irPara(tela) {
   S.telaAnterior = S.tela === tela ? S.telaAnterior : S.tela;
   S.tela = tela;
@@ -528,7 +476,6 @@ function irPara(tela) {
   $("#btnChatTopo").classList.toggle("hidden", !["jogo", "salas", "home"].includes(tela));
   render();
 }
-
 function render() {
   $("#quemSou").innerHTML = S.usuario
     ? `<span style="color:${corDe(S.usuario)}">${emojiDe(S.usuario)} ${esc(nomeDe(S.usuario))}</span>` : "";
@@ -541,8 +488,6 @@ function render() {
     case "config": return renderConfig();
   }
 }
-
-/* ---------- presença / perfis ---------- */
 function ouvirPerfis() {
   S.unsubPerfis?.();
   S.unsubPerfis = onSnapshot(collection(db, "perfis"), snap => {
@@ -558,9 +503,7 @@ const estaOnline = nome => {
   return agora() - ms < 75000;
 };
 
-/* ============================================================
-   TELA 0 — LOGIN
-   ============================================================ */
+/* 10. LOGIN */
 function renderLogin() {
   $("#conteudo").innerHTML = `
   <div class="min-h-[100dvh] flex flex-col items-center justify-center px-5 py-10 fadeIn">
@@ -587,8 +530,7 @@ async function abrirPin(nome) {
   tocarSom("playClick");
   let cfg;
   try { cfg = await lerConfigFamilia(); }
-  catch (e) { toast("Sem conexão com o Firebase. Verifique o firebaseConfig."); return; }
-
+  catch (e) { toast("Sem conexão com o Firebase."); return; }
   if (!cfg) { await configuracaoInicial(nome); return; }
 
   let digitado = "";
@@ -610,7 +552,7 @@ async function abrirPin(nome) {
       <button class="btn btn-s text-xl py-3" data-n="0">0</button>
       <button class="btn btn-g text-xl py-3" data-fechar>✕</button>
     </div>
-    <p id="pinErro" class="text-center text-sm mt-3" style="color:var(--giovanna);min-height:20px"></p>`;
+    <p id="pinErro" class="text-center text-sm mt-3" style="color:#E08AA6;min-height:20px"></p>`;
   root.classList.add("aberto");
   pintar();
 
@@ -661,9 +603,6 @@ async function configuracaoInicial(nome) {
     ]
   });
   if (r !== "ok") return;
-  // O modal já resolveu a Promise, mas o innerHTML ainda está intacto
-  // (a limpeza acontece no próximo tick, via setTimeout 0). Por isso
-  // conseguimos ler os inputs abaixo com segurança.
   const pin = ($("#cfgPin")?.value || "").trim();
   if (!/^\d{4}$/.test(pin)) { toast("O PIN precisa ter exatamente 4 dígitos"); return; }
   const apelidos = {};
@@ -699,9 +638,7 @@ function iniciarHeartbeat() {
   document.addEventListener("visibilitychange", () => { if (!document.hidden) bater(); });
 }
 
-/* ============================================================
-   TELA 1 — HOME / LOBBY
-   ============================================================ */
+/* 11. HOME */
 function renderHome() {
   const eu = S.usuario;
   const diasJuntos = (() => {
@@ -714,16 +651,14 @@ function renderHome() {
     (() => { const p = S.perfis[n].ultima_vez_online; if (!p) return true;
       const ms = p.toMillis ? p.toMillis() : p; return agora() - ms > 2 * 86400000; })());
 
-  const ultimaVitoria = S._ultimaVitoria;
-
   $("#conteudo").innerHTML = `
   <div class="px-4 pb-28 pt-3 fadeIn max-w-3xl mx-auto">
     <h1 class="titulo text-3xl font-bold">Bora jogar, ${esc(nomeDe(eu))}? ${emojiDe(eu)}</h1>
     <p class="mt-1" style="color:var(--ink2)">${esc(fraseDoDia())}</p>
 
-    ${ultimaVitoria ? `<div class="card p-3 mt-4 flex items-center gap-3 popIn">
+    ${S.ultimaVitoria ? `<div class="card p-3 mt-4 flex items-center gap-3 popIn">
       <span class="text-2xl">🏆</span>
-      <span class="font-bold">${esc(nomeDe(ultimaVitoria.nome))} ganhou no ${esc(JOGOS[ultimaVitoria.jogo]?.nome || ultimaVitoria.jogo)}!</span>
+      <span class="font-bold">${esc(nomeDe(S.ultimaVitoria.nome))} ganhou no ${esc(JOGOS[S.ultimaVitoria.jogo]?.nome || S.ultimaVitoria.jogo)}!</span>
     </div>` : ""}
 
     <div class="card p-4 mt-4">
@@ -773,7 +708,6 @@ function renderHome() {
   $("#btnConfig").onclick = () => irPara("config");
 }
 
-/* ---------- escolher quem joga e criar a mesa ---------- */
 async function escolherModo(jogo) {
   const g = JOGOS[jogo];
   const outros = NOMES.filter(n => n !== S.usuario);
@@ -791,12 +725,11 @@ async function escolherModo(jogo) {
             ${emojiDe(n)} ${esc(nomeDe(n))}
           </button>`).join("")}
       </div>
-      <p class="text-xs mt-3" style="color:var(--ink2)">Você já está na mesa. Pode jogar sozinho contra a banca/máquina ou esperar os irmãos entrarem pelo link.</p>`,
+      <p class="text-xs mt-3" style="color:var(--ink2)">Mínimo de ${g.minJogadores}. Se faltar gente, você espera na mesa e manda o link.</p>`,
     botoes: [
       { texto: "Cancelar", valor: null, classe: "btn-s" },
       { texto: "Criar mesa 🎲", valor: "ok", classe: "btn-p" }
     ],
-    // Conecta os cliques nos chips ENQUANTO o modal está aberto.
     onMount(caixa) {
       caixa.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => {
         const n = b.dataset.p;
@@ -817,15 +750,13 @@ async function escolherModo(jogo) {
 
   const jogadores = [S.usuario, ...outros.filter(n => selecionados.has(n))].slice(0, max);
   try {
-    const id = await criarSala(jogo, jogadores.length ? jogadores : [S.usuario]);
+    const id = await criarSala(jogo, jogadores);
     abrirSala(id);
     toast(`Mesa criada! Código ${id}`);
   } catch (e) { toast("Não deu pra criar a mesa: " + e.message); }
 }
 
-/* ============================================================
-   TELA 2 — SALAS ABERTAS
-   ============================================================ */
+/* 12. SALAS ABERTAS */
 function ouvirSalas() {
   S.unsubSalas?.();
   S.unsubSalas = onSnapshot(
@@ -841,7 +772,7 @@ function renderSalas() {
   <div class="px-4 pb-28 pt-3 max-w-3xl mx-auto fadeIn">
     <h1 class="titulo text-3xl font-bold">Mesas abertas 🪑</h1>
     <p class="mt-1 mb-5" style="color:var(--ink2)">Entra em uma ou abre a sua</p>
-    <div class="space-y-3" id="listaSalas">
+    <div class="space-y-3">
       ${S.salasCache.length ? S.salasCache.map(s => {
         const g = JOGOS[s.jogo] || { nome: s.jogo, icone: "🎲" };
         const minhaVez = s.turno === S.usuario;
@@ -876,8 +807,6 @@ function renderSalas() {
         caixa.querySelectorAll("[data-nj]").forEach(b => b.addEventListener("click", () => {
           const jogo = b.dataset.nj;
           fechar(null);
-          // pequeno delay pra garantir que a limpeza do modal anterior
-          // não interfira no novo modal que será aberto por escolherModo.
           setTimeout(() => escolherModo(jogo), 10);
         }));
       }
@@ -885,9 +814,7 @@ function renderSalas() {
   };
 }
 
-/* ============================================================
-   TELA 3 — JOGO (renderização dinâmica)
-   ============================================================ */
+/* 13. TELA DE JOGO */
 function abrirSala(salaId) {
   S.salaId = salaId;
   history.replaceState(null, "", `${location.pathname}?sala=${salaId}`);
@@ -900,7 +827,6 @@ function fecharSala() {
   S.salaId = null; S.sala = null; S.chat = [];
   history.replaceState(null, "", location.pathname);
 }
-
 function ouvirSalaAtual() {
   S.unsubSala?.();
   S.unsubSala = onSnapshot(refSala(S.salaId), snap => {
@@ -910,26 +836,21 @@ function ouvirSalaAtual() {
     S.sala = nova;
 
     if (anterior && anterior.turno !== nova.turno && nova.turno === S.usuario && nova.status === "jogando") {
-      tocarSom("playYourTurn");
-      vibrar([40, 60, 40]);
+      tocarSom("playYourTurn"); vibrar([40, 60, 40]);
       toast(`É sua vez, ${nomeDe(S.usuario)}! ${emojiDe(S.usuario)}`);
-      notificar("É sua vez!", `Sua vez no ${JOGOS[nova.jogo].nome}, ${nomeDe(S.usuario)} ${emojiDe(S.usuario)}`);
     }
     if (anterior && !anterior.vencedor && nova.vencedor) {
       tocarSom("playVictory"); confete(1.3);
       vibrar([60, 80, 60, 80, 120]);
-      notificar("Vitória! 🏆", `${nomeDe(nova.vencedor)} ganhou no ${JOGOS[nova.jogo].nome}`);
-      S._ultimaVitoria = { nome: nova.vencedor, jogo: nova.jogo };
-      if (nova.vencedor === S.usuario) registrarResultado(nova.jogo, nova.vencedor, false);
+      S.ultimaVitoria = { nome: nova.vencedor, jogo: nova.jogo };
+      if (nova.vencedor === S.usuario) registrarResultado(nova.jogo, nova.vencedor);
     }
     if (anterior && !anterior.empate && nova.empate) {
-      tocarSom("playPiecePlace");
-      toast(`Deu velha 🤝 — boa partida, gente!`);
+      tocarSom("playPiecePlace"); toast(`Deu velha 🤝 — boa partida, gente!`);
     }
     if (S.tela === "jogo") renderTelaJogo();
   }, () => {});
 }
-
 function ouvirChat() {
   S.unsubChat?.();
   S.unsubChat = onSnapshot(
@@ -951,9 +872,45 @@ function ouvirChat() {
 }
 
 function renderTelaJogo() {
-  const sala = S.sala; if (!sala) return;
+  const sala = S.sala;
+  if (!sala) {
+    $("#conteudo").innerHTML = `<div class="p-8 text-center fadeIn" style="color:var(--ink2)">Preparando a mesa…</div>`;
+    return;
+  }
   const g = JOGOS[sala.jogo];
-  const meuTurno = sala.turno === S.usuario;
+  const min = g.minJogadores;
+
+  // Tela de espera enquanto não tem jogadores suficientes
+  if ((sala.jogadores || []).length < min) {
+    const link = `${location.origin}${location.pathname}?sala=${sala.id}`;
+    const faltam = min - (sala.jogadores || []).length;
+    $("#conteudo").innerHTML = `
+    <div class="px-4 pb-28 pt-3 max-w-3xl mx-auto fadeIn text-center">
+      <h1 class="titulo text-3xl font-bold mb-2">${g.icone} ${esc(g.nome)}</h1>
+      <p class="mb-4" style="color:var(--ink2)">Aguardando ${faltam} jogador${faltam > 1 ? "es" : ""}…</p>
+      <div class="card p-6 mb-4">
+        <p class="text-lg mb-3">Manda esse link pros irmãos:</p>
+        <p class="text-sm break-all mb-3" style="color:var(--ink2)">${esc(link)}</p>
+        <button id="btnCopiar" class="btn btn-p">Copiar link</button>
+      </div>
+      <div class="flex flex-wrap gap-2 justify-center mb-4">
+        ${(sala.jogadores || []).map(n => `<span class="chip" style="background:${corDe(n)};color:#fff">${emojiDe(n)} ${esc(nomeDe(n))}</span>`).join("")}
+      </div>
+      <button id="btnSairWait" class="btn btn-g">Sair da mesa</button>
+    </div>`;
+    $("#btnCopiar").onclick = async () => {
+      try { await navigator.clipboard.writeText(link); toast("Link copiado 💙"); }
+      catch (e) { toast("Não deu pra copiar — copia manualmente"); }
+    };
+    $("#btnSairWait").onclick = async () => {
+      if (!await confirmar("Sair da mesa", "Sair desta mesa?")) return;
+      const jogadores = (sala.jogadores || []).filter(n => n !== S.usuario);
+      if (!jogadores.length) await updateDoc(refSala(sala.id), { status: "finalizada", atualizada_em: serverTimestamp() });
+      else await updateDoc(refSala(sala.id), { jogadores, atualizada_em: serverTimestamp() });
+      fecharSala(); irPara("home");
+    };
+    return;
+  }
 
   $("#conteudo").innerHTML = `
   <div class="px-3 pb-28 pt-3 max-w-3xl mx-auto fadeIn">
@@ -1035,17 +992,13 @@ function renderTelaJogo() {
   $("#btnZoar").onclick = () => {
     modal({
       titulo: "Zoação carinhosa 😜",
-      html: `<p class="mb-3" style="color:var(--ink2)">Escolhe um emoji pra aparecer na tela dos irmãos por 2 segundos.</p>
+      html: `<p class="mb-3" style="color:var(--ink2)">Escolhe um emoji pra aparecer na tela dos irmãos.</p>
              <div class="flex flex-wrap gap-2">${APP_CONFIG.zoacoes.map(z => `<button class="btn btn-s text-2xl" data-z="${z}">${z}</button>`).join("")}</div>`,
       botoes: [{ texto: "Fechar", valor: null, classe: "btn-g" }],
       onMount(caixa, fechar) {
         caixa.querySelectorAll("[data-z]").forEach(b => b.addEventListener("click", () => {
-          const z = b.dataset.z;
-          fechar(null);
-          setTimeout(() => {
-            emojiVoador(z);
-            tocarSom("playChatMessage");
-          }, 10);
+          const z = b.dataset.z; fechar(null);
+          setTimeout(() => { emojiVoador(z); tocarSom("playChatMessage"); }, 10);
         }));
       }
     });
@@ -1058,7 +1011,6 @@ function renderTelaJogo() {
     fecharSala(); irPara("home");
   };
 
-  // chat
   const painel = $("#chatPainel");
   const abrirChat = () => { painel.classList.add("aberto"); S.chatAberto = true; pintarChat(); };
   const fecharChat = () => { painel.classList.remove("aberto"); S.chatAberto = false; };
@@ -1074,7 +1026,6 @@ function renderTelaJogo() {
   $$("[data-rapida]").forEach(b => b.addEventListener("click", () => enviarMensagem(b.dataset.rapida)));
   pintarChat();
 }
-
 function pintarChat() {
   const box = $("#chatMsgs"); if (!box) return;
   box.innerHTML = S.chat.map(m => `
@@ -1083,8 +1034,6 @@ function pintarChat() {
     </div>`).join("");
   box.scrollTop = box.scrollHeight;
 }
-
-/** Títulos afetivos por jogo. */
 function tituloAfetivo(sala) {
   const outros = (sala.jogadores || []).filter(n => n !== S.usuario);
   const quem = outros.length ? nomeDe(outros[0]) : "os irmãos";
@@ -1102,16 +1051,14 @@ function tituloAfetivo(sala) {
 }
 
 /* ============================================================
-   5. ROTEADOR DE JOGOS — registro dos 8 jogos
+   14. REGISTRO DOS JOGOS
    ============================================================ */
 const JOGOS_LISTA = ["velha", "dama", "domino", "ludo", "xadrez", "pifpaf", "vinteum", "forca"];
 const JOGOS = {};
 
-/* ============================================================
-   6. JOGO DA VELHA
-   ============================================================ */
+/* ---------- VELHA ---------- */
 JOGOS.velha = {
-  nome: "Jogo da Velha", icone: "❌⭕", minJogadores: 1, maxJogadores: 2,
+  nome: "Jogo da Velha", icone: "❌⭕", minJogadores: 2, maxJogadores: 2,
   descricao: "Rapidinho de 3 em linha",
   descricaoLonga: "Melhor de 5: quem chegar a 3 vitórias leva a partida.",
   novoEstado(jogadores) {
@@ -1120,20 +1067,14 @@ JOGOS.velha = {
     ordem.forEach((n, i) => simbolos[n] = i === 0 ? "X" : "O");
     return {
       tabuleiro: Array(9).fill(null),
-      simbolos,
-      ordem,
-      rodada: 1,
+      simbolos, ordem, rodada: 1,
       vitorias: Object.fromEntries(jogadores.map(j => [j, 0])),
-      historico: [],
-      linhaVencedora: null,
-      fimRodada: null
+      historico: [], linhaVencedora: null, fimRodada: null
     };
   },
-  primeiroTurno(estado) { return estado.ordem[0]; },
+  primeiroTurno(e) { return e.ordem[0]; },
   render(area, sala) {
-    const e = sala.estado;
-    const eu = S.usuario;
-    const vez = sala.turno;
+    const e = sala.estado, eu = S.usuario, vez = sala.turno;
     const empate = e.fimRodada === "empate";
     const vencedorRodada = e.fimRodada && e.fimRodada !== "empate"
       ? Object.keys(e.simbolos).find(k => e.simbolos[k] === e.fimRodada) : null;
@@ -1149,8 +1090,7 @@ JOGOS.velha = {
         </div>
         <div class="tab-velha" id="tabVelha">
           ${e.tabuleiro.map((c, i) => `
-            <div class="cel ${e.linhaVencedora?.includes(i) ? "cel-vitoria" : ""}" data-i="${i}"
-                 style="${c ? `color:${c === "X" ? "var(--douglas)" : "var(--giovanna)"}` : ""}">
+            <div class="cel ${e.linhaVencedora?.includes(i) ? "cel-vitoria" : ""}" data-i="${i}">
               ${c ? `<span class="popIn">${c === "X" ? "❌" : "⭕"}</span>` : ""}
             </div>`).join("")}
         </div>
@@ -1175,7 +1115,6 @@ JOGOS.velha = {
       if (e.fimRodada || vez !== eu) { tocarSom("playErrorSound"); return; }
       const i = +cel.dataset.i;
       if (e.tabuleiro[i]) { tocarSom("playErrorSound"); return; }
-      if (!validarJogadaVelha(e.tabuleiro, i)) return;
 
       const tab = [...e.tabuleiro];
       tab[i] = e.simbolos[eu];
@@ -1190,16 +1129,14 @@ JOGOS.velha = {
         const campeao = Object.keys(novo.vitorias).find(k => novo.vitorias[k] >= 3);
         tocarSom(res === "empate" ? "playPiecePlace" : "playVictory");
         await salvarSala({
-          estado: novo,
-          empate: res === "empate",
+          estado: novo, empate: res === "empate",
           vencedor: campeao || null,
           status: campeao ? "finalizada" : "jogando",
           placar_rodadas: novo.vitorias
         });
         if (!campeao) toast("Rodada terminada! Bora pra próxima 🎲");
       } else {
-        tocarSom("playPiecePlace");
-        vibrar(20);
+        tocarSom("playPiecePlace"); vibrar(20);
         const outro = sala.jogadores.find(n => n !== eu) || eu;
         await salvarSala({ estado: novo, turno: outro, vencedor: null, empate: false });
       }
@@ -1208,34 +1145,73 @@ JOGOS.velha = {
     const btn = $("#velhaProxima");
     if (btn) btn.onclick = async () => {
       const ordem = [...(e.ordem || sala.jogadores)].reverse();
-      const estado = {
-        ...e,
-        tabuleiro: Array(9).fill(null),
-        ordem,
-        rodada: (e.rodada || 1) + 1,
-        linhaVencedora: null,
-        fimRodada: null
-      };
+      const estado = { ...e, tabuleiro: Array(9).fill(null), ordem, rodada: (e.rodada || 1) + 1,
+                       linhaVencedora: null, fimRodada: null };
       await salvarSala({ estado, turno: ordem[0], vencedor: null, empate: false, status: "jogando" });
       tocarSom("playPieceMove");
     };
   }
 };
-function validarJogadaVelha(tabuleiro, posicao) {
-  return posicao >= 0 && posicao < 9 && !tabuleiro[posicao];
-}
 const LINHAS_VELHA = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 function linhasVencedoras(t) { return LINHAS_VELHA.filter(l => t[l[0]] && t[l[0]] === t[l[1]] && t[l[1]] === t[l[2]]); }
-function verificarVencedorVelha(tabuleiro) {
-  const l = linhasVencedoras(tabuleiro);
-  if (l.length) return tabuleiro[l[0][0]];
-  return tabuleiro.every(c => c) ? "empate" : null;
+function verificarVencedorVelha(t) {
+  const l = linhasVencedoras(t);
+  if (l.length) return t[l[0][0]];
+  return t.every(c => c) ? "empate" : null;
 }
 
-/* ============================================================
-   7. DAMA (checkers brasileiro)
-   ============================================================ */
-const DIR_DAMA = { 0: [1, 1], 1: [1, -1], 2: [-1, -1], 3: [-1, 1] };
+/* ---------- DAMA (com as 2 diagonais de frente corrigidas) ---------- */
+const DIRS_DIAG = [[1,1],[1,-1],[-1,1],[-1,-1]];
+
+/** Direções "de frente" de um jogador (2 diagonais). */
+function direcoesFrente(idx, modo) {
+  if (modo === 2) return idx === 0 ? [[1, 1], [1, -1]] : [[-1, 1], [-1, -1]];
+  // 4 jogadores: topo desce, fundo sobe
+  return idx < 2 ? [[1, 1], [1, -1]] : [[-1, 1], [-1, -1]];
+}
+const dentro = (l, c) => l >= 0 && l < 8 && c >= 0 && c < 8;
+
+/** Movimentos legais de uma peça. `dirFrente` = array de direções (2 diagonais). */
+function movimentosDaPeca(e, l, c, dirFrente) {
+  const casa = e.casas[l][c]; if (!casa) return [];
+  const out = [];
+  const dirsMov = casa.r ? DIRS_DIAG : dirFrente; // dama anda em todas; peão só pra frente
+  const dirsCap = DIRS_DIAG;                       // captura sempre nas 4 direções
+
+  // Movimentos simples
+  for (const [dr, dc] of dirsMov) {
+    if (casa.r) {
+      let ll = l + dr, cc = c + dc;
+      while (dentro(ll, cc) && !e.casas[ll][cc]) {
+        out.push({ de: [l, c], para: [ll, cc], captura: false });
+        ll += dr; cc += dc;
+      }
+    } else {
+      const l1 = l + dr, c1 = c + dc;
+      if (dentro(l1, c1) && !e.casas[l1][c1])
+        out.push({ de: [l, c], para: [l1, c1], captura: false });
+    }
+  }
+
+  // Capturas
+  for (const [dr, dc] of dirsCap) {
+    if (casa.r) {
+      let ll = l + dr, cc = c + dc;
+      while (dentro(ll, cc) && !e.casas[ll][cc]) { ll += dr; cc += dc; }
+      if (dentro(ll, cc) && e.casas[ll][cc] && e.casas[ll][cc].d !== casa.d) {
+        const l2 = ll + dr, c2 = cc + dc;
+        if (dentro(l2, c2) && !e.casas[l2][c2])
+          out.push({ de: [l, c], para: [l2, c2], captura: [ll, cc] });
+      }
+    } else {
+      const l1 = l + dr, c1 = c + dc, l2 = l + dr * 2, c2 = c + dc * 2;
+      const meio = e.casas[l1]?.[c1];
+      if (dentro(l2, c2) && meio && meio.d !== casa.d && !e.casas[l2][c2])
+        out.push({ de: [l, c], para: [l2, c2], captura: [l1, c1] });
+    }
+  }
+  return out;
+}
 
 JOGOS.dama = {
   nome: "Dama", icone: "🟥", minJogadores: 2, maxJogadores: 4,
@@ -1259,12 +1235,8 @@ JOGOS.dama = {
       });
     }
     return {
-      casas,
-      modo: n <= 2 ? 2 : 4,
-      duplas: n > 2,
-      semCaptura: 0,
-      pecaObrigatoria: null,
-      ultimoLance: null
+      casas, modo: n <= 2 ? 2 : 4, duplas: n > 2,
+      semCaptura: 0, pecaObrigatoria: null, ultimoLance: null
     };
   },
   render(area, sala) {
@@ -1274,12 +1246,12 @@ JOGOS.dama = {
     const vezIdx = meus.indexOf(sala.turno);
     const minhaVez = sala.turno === eu;
 
-    const dirDe = idx => DIR_DAMA[e.modo === 2 ? (idx === 0 ? 0 : 2) : idx];
+    const dirFrente = direcoesFrente(vezIdx, e.modo);
     const donosDoMeuTime = e.duplas
       ? meus.filter((_, i) => i % 2 === meuIndice % 2) : [eu];
 
     const selecionada = e.ultimoLance?.selecionada;
-    const movs = selecionada ? movimentosDaPeca(e, selecionada[0], selecionada[1], dirDe(vezIdx)) : [];
+    const movs = selecionada ? movimentosDaPeca(e, selecionada[0], selecionada[1], dirFrente) : [];
 
     area.innerHTML = `
       <div class="card p-3">
@@ -1288,8 +1260,9 @@ JOGOS.dama = {
             const clara = (l + c) % 2 === 0;
             const sel = selecionada && selecionada[0] === l && selecionada[1] === c;
             const dest = movs.some(m => m.para[0] === l && m.para[1] === c);
-            const ult = e.ultimoLance && ((e.ultimoLance.de[0] === l && e.ultimoLance.de[1] === c) ||
-                                          (e.ultimoLance.para[0] === l && e.ultimoLance.para[1] === c));
+            const ult = e.ultimoLance && e.ultimoLance.de && e.ultimoLance.para &&
+              ((e.ultimoLance.de[0] === l && e.ultimoLance.de[1] === c) ||
+               (e.ultimoLance.para[0] === l && e.ultimoLance.para[1] === c));
             return `<div class="cel ${clara ? "clara" : "escura"} ${sel ? "sel" : ""} ${dest ? "destino" : ""}"
                          data-l="${l}" data-c="${c}" style="${ult ? "outline:2px solid var(--gold);outline-offset:-2px" : ""}">
               ${casa ? `<div class="popIn" style="width:74%;height:74%;border-radius:50%;
@@ -1312,75 +1285,41 @@ JOGOS.dama = {
       if (!minhaVez || sala.vencedor) { tocarSom("playErrorSound"); return; }
       const l = +cel.dataset.l, c = +cel.dataset.c;
       const casa = e.casas[l][c];
-      const dir = dirDe(vezIdx);
 
+      // Clicou num destino válido?
       if (selecionada) {
         const mov = movs.find(m => m.para[0] === l && m.para[1] === c);
-        if (mov) return executarMovimentoDama(sala, e, mov, dir);
+        if (mov) return executarMovimentoDama(sala, e, mov, dirFrente);
       }
+      // Selecionar peça própria?
       if (casa && donosDoMeuTime.includes(casa.d)) {
         if (e.pecaObrigatoria && (e.pecaObrigatoria[0] !== l || e.pecaObrigatoria[1] !== c)) {
-          tocarSom("playErrorSound"); toast("Você precisa continuar a captura com a mesma peça 🔴"); return;
+          tocarSom("playErrorSound"); toast("Continue a captura com a mesma peça 🔴"); return;
         }
-        const lista = movimentosDaPeca(e, l, c, dir);
-        const capturasGlobais = todasCapturas(e, donosDoMeuTime, dir);
+        const lista = movimentosDaPeca(e, l, c, dirFrente);
+        const capturasGlobais = todasCapturas(e, donosDoMeuTime, dirFrente);
         if (capturasGlobais.length && !lista.some(m => m.captura)) {
           tocarSom("playErrorSound"); toast("Captura obrigatória! Escolha outra peça 🔴"); return;
         }
         tocarSom("playClick");
-        await salvarSala({ estado: { ...e, ultimoLance: { ...(e.ultimoLance || {}), selecionada: [l, c] } } });
+        await salvarSala({
+          estado: { ...e, ultimoLance: { ...(e.ultimoLance || {}), selecionada: [l, c] } }
+        });
       }
     }));
   }
 };
 
-function dirsJogador(idx, modo) { return DIR_DAMA[modo === 2 ? (idx === 0 ? 0 : 2) : idx]; }
-
-function movimentosDaPeca(e, l, c, dir) {
-  const casa = e.casas[l][c]; if (!casa) return [];
-  const out = [];
-  const sentidos = casa.r ? [[1,1],[1,-1],[-1,1],[-1,-1]] : [dir, [-dir[0], -dir[1]]];
-  for (const [dr, dc] of sentidos) {
-    const l1 = l + dr, c1 = c + dc;
-    if (casa.r) {
-      let ll = l1, cc = c1;
-      while (dentro(ll, cc) && !e.casas[ll][cc]) { out.push({ de: [l, c], para: [ll, cc], captura: false }); ll += dr; cc += dc; }
-    } else if (dentro(l1, c1) && !e.casas[l1][c1] && dirValida(dir, dr, dc, false)) {
-      out.push({ de: [l, c], para: [l1, c1], captura: false });
-    }
-    if (casa.r) {
-      let ll = l + dr, cc = c + dc;
-      while (dentro(ll, cc) && !e.casas[ll][cc]) { ll += dr; cc += dc; }
-      if (dentro(ll, cc) && e.casas[ll][cc] && e.casas[ll][cc].d !== casa.d) {
-        const l2 = ll + dr, c2 = cc + dc;
-        if (dentro(l2, c2) && !e.casas[l2][c2]) out.push({ de: [l, c], para: [l2, c2], captura: [ll, cc] });
-      }
-    } else {
-      const l2 = l + dr * 2, c2 = c + dc * 2;
-      const meio = e.casas[l1]?.[c1];
-      if (dentro(l2, c2) && meio && meio.d !== casa.d && !e.casas[l2][c2]) {
-        out.push({ de: [l, c], para: [l2, c2], captura: [l1, c1] });
-      }
-    }
-  }
-  return out;
-}
-const dentro = (l, c) => l >= 0 && l < 8 && c >= 0 && c < 8;
-function dirValida(dir, dr, dc, captura) {
-  if (dir[0] === dr && dir[1] === dc) return true;
-  if (captura && -dir[0] === dr && -dir[1] === dc) return true;
-  return false;
-}
-function todasCapturas(e, donos, dir) {
+function todasCapturas(e, donos, dirFrente) {
   const out = [];
   for (let l = 0; l < 8; l++) for (let c = 0; c < 8; c++) {
     const p = e.casas[l][c];
-    if (p && donos.includes(p.d)) out.push(...movimentosDaPeca(e, l, c, dir).filter(m => m.captura));
+    if (p && donos.includes(p.d)) out.push(...movimentosDaPeca(e, l, c, dirFrente).filter(m => m.captura));
   }
   return out;
 }
 
-async function executarMovimentoDama(sala, e, mov, dir) {
+async function executarMovimentoDama(sala, e, mov, dirFrente) {
   const casas = e.casas.map(l => l.map(c => c ? { ...c } : null));
   const peca = casas[mov.de[0]][mov.de[1]];
   casas[mov.de[0]][mov.de[1]] = null;
@@ -1394,15 +1333,19 @@ async function executarMovimentoDama(sala, e, mov, dir) {
     semCaptura = (e.semCaptura || 0) + 1;
     tocarSom("playPieceMove"); vibrar(20);
   }
+  // Promoção
   if (!e.duplas) {
     const idx = sala.jogadores.indexOf(peca.d);
     const linhaFinal = idx === 0 ? 7 : 0;
-    if (!peca.r && mov.para[0] === linhaFinal) { peca.r = true; tocarSom("playVictory"); toast("Virou dama! ♛"); }
+    if (!peca.r && mov.para[0] === linhaFinal) {
+      peca.r = true; tocarSom("playVictory"); toast("Virou dama! ♛");
+    }
   }
-
   const novo = { ...e, casas, semCaptura, ultimoLance: { de: mov.de, para: mov.para, captura: mov.captura || null } };
 
-  const continuacoes = mov.captura ? movimentosDaPeca(novo, mov.para[0], mov.para[1], dir).filter(m => m.captura) : [];
+  // Cadeia de captura
+  const continuacoes = mov.captura
+    ? movimentosDaPeca(novo, mov.para[0], mov.para[1], dirFrente).filter(m => m.captura) : [];
   if (continuacoes.length && mov.captura) {
     novo.pecaObrigatoria = mov.para;
     novo.ultimoLance.selecionada = mov.para;
@@ -1412,30 +1355,26 @@ async function executarMovimentoDama(sala, e, mov, dir) {
   }
   novo.pecaObrigatoria = null;
 
+  // Condições de fim
   const restantes = novo.casas.flat().filter(p => p && timeDe(p.d, sala) !== timeDe(sala.turno, sala));
   const meusRestantes = novo.casas.flat().filter(p => p && timeDe(p.d, sala) === timeDe(sala.turno, sala));
-
-  if (restantes.length === 0) {
-    return finalizarDama(sala, sala.turno, novo, "Todas as peças do outro time foram capturadas!");
-  }
+  if (restantes.length === 0) return finalizarDama(sala, sala.turno, novo, "Todas as peças do outro time foram capturadas!");
   if (meusRestantes.length === 0) {
     const outro = sala.jogadores.find(n => n !== sala.turno);
     return finalizarDama(sala, outro, novo, "Sem peças pra jogar!");
   }
 
   const proximo = proximoTurno(sala);
-  const dirProx = dirsJogador(sala.jogadores.indexOf(proximo), e.modo);
+  const dirProxFrente = direcoesFrente(sala.jogadores.indexOf(proximo), e.modo);
   const temMov = novo.casas.flat().some((p, i) => p && p.d === proximo &&
-    movimentosDaPeca(novo, Math.floor(i / 8), i % 8, dirProx).length > 0);
-  if (!temMov) {
-    return finalizarDama(sala, sala.turno, novo, `${nomeDe(proximo)} ficou sem jogadas!`);
-  }
+    movimentosDaPeca(novo, Math.floor(i / 8), i % 8, dirProxFrente).length > 0);
+  if (!temMov) return finalizarDama(sala, sala.turno, novo, `${nomeDe(proximo)} ficou sem jogadas!`);
 
   const pecasRestantes = novo.casas.flat().filter(Boolean);
   const soDamas = pecasRestantes.every(p => p.r);
   if (novo.semCaptura >= 20 || (soDamas && pecasRestantes.length <= 2)) {
     return salvarSala({ estado: novo, empate: true, vencedor: null, status: "finalizada" })
-      .then(() => toast("Empate — jogo longo demais ou só damas na mesa 🤝"));
+      .then(() => toast("Empate — jogo longo demais ou só damas 🤝"));
   }
 
   await salvarSala({ estado: novo, turno: proximo, vencedor: null, empate: false });
@@ -1447,30 +1386,24 @@ function timeDe(nome, sala) {
   return i % 2 === 0 ? "A" : "B";
 }
 function finalizarDama(sala, vencedor, estado, motivo) {
-  return salvarSala({
-    estado, vencedor: vencedor, empate: false, status: "finalizada"
-  }).then(() => {
-    toast(motivo);
-    confete(1.2);
-  });
+  return salvarSala({ estado, vencedor, empate: false, status: "finalizada" })
+    .then(() => { toast(motivo); confete(1.2); });
 }
 
-/* ============================================================
-   8. DOMINÓ
-   ============================================================ */
+/* ---------- DOMINÓ ---------- */
 JOGOS.domino = {
   nome: "Dominó", icone: "🁣", minJogadores: 2, maxJogadores: 4,
   descricao: "Duplo-seis, individual ou duplas",
   descricaoLonga: "28 peças. Vence quem bater primeiro, ou a menor soma de pontos se o jogo fechar.",
   novoEstado(jogadores) {
-    const pecas = [];
-    let id = 0;
+    const pecas = []; let id = 0;
     for (let a = 0; a <= 6; a++) for (let b = a; b <= 6; b++) pecas.push({ id: id++, a, b });
     pecas.sort(() => Math.random() - .5);
     const maos = {};
     jogadores.forEach(n => maos[n] = []);
     const porJogador = 7;
-    for (let i = 0; i < jogadores.length * porJogador; i++) maos[jogadores[i % jogadores.length]].push(pecas[i].id);
+    for (let i = 0; i < jogadores.length * porJogador; i++)
+      maos[jogadores[i % jogadores.length]].push(pecas[i].id);
     const monte = pecas.slice(jogadores.length * porJogador).map(p => p.id);
     let iniciante = jogadores[0], melhor = -1;
     jogadores.forEach(n => maos[n].forEach(pid => {
@@ -1479,7 +1412,7 @@ JOGOS.domino = {
     }));
     return { pecas, maos, monte, mesa: [], passes: 0, duplas: jogadores.length === 4, iniciante };
   },
-  primeiroTurno(estado) { return estado.iniciante; },
+  primeiroTurno(e) { return e.iniciante; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const minhaVez = sala.turno === eu;
@@ -1526,7 +1459,7 @@ JOGOS.domino = {
       if (!minhaVez || sala.vencedor) { tocarSom("playErrorSound"); return; }
       const id = +el.dataset.peca;
       const p = pecaDe(id);
-      if (!podeJogar(p, pontas)) { tocarSom("playErrorSound"); toast("Essa peça não encaixa em nenhuma ponta"); return; }
+      if (!podeJogar(p, pontas)) { tocarSom("playErrorSound"); toast("Essa peça não encaixa"); return; }
       await jogarDomino(sala, e, id, pontas);
     }));
     const bc = $("#domComprar");
@@ -1537,15 +1470,13 @@ JOGOS.domino = {
       const id = monte.shift();
       maos[eu] = [...maos[eu], id];
       tocarSom("playPieceMove"); vibrar(20);
-      const novo = { ...e, maos, monte };
-      await salvarSala({ estado: novo });
+      await salvarSala({ estado: { ...e, maos, monte } });
     };
     const bp = $("#domPassar");
     if (bp) bp.onclick = async () => {
       const passes = (e.passes || 0) + 1;
       if (passes >= sala.jogadores.length) return fecharDomino(sala, { ...e, passes: 0 });
-      const proximo = proximoTurno(sala);
-      await salvarSala({ estado: { ...e, passes }, turno: proximo });
+      await salvarSala({ estado: { ...e, passes }, turno: proximoTurno(sala) });
       toast("Passou a vez");
     };
   }
@@ -1582,7 +1513,6 @@ async function jogarDomino(sala, e, id, pontas) {
   const maos = { ...e.maos, [eu]: e.maos[eu].filter(x => x !== id) };
   tocarSom("playPieceMove"); vibrar(30);
   const novo = { ...e, mesa, maos, passes: 0 };
-
   if (maos[eu].length === 0) return fecharDomino(sala, novo, eu);
   await salvarSala({ estado: novo, turno: proximoTurno(sala) });
 }
@@ -1597,16 +1527,11 @@ async function fecharDomino(sala, estado, bateram) {
   }
   const placar = { ...(sala.placar_rodadas || {}) };
   placar[vencedor] = (placar[vencedor] || 0) + 1;
-  await salvarSala({
-    estado, vencedor, empate: false,
-    status: "finalizada", placar_rodadas: placar
-  });
+  await salvarSala({ estado, vencedor, empate: false, status: "finalizada", placar_rodadas: placar });
   confete(1.2);
 }
 
-/* ============================================================
-   9. LUDO
-   ============================================================ */
+/* ---------- LUDO ---------- */
 const LUDO_PATH = [
   [0,6],[1,6],[2,6],[3,6],[4,6],[5,6],
   [6,5],[6,4],[6,3],[6,2],[6,1],[6,0],
@@ -1643,9 +1568,9 @@ JOGOS.ludo = {
   novoEstado(jogadores) {
     const peoes = {};
     jogadores.forEach(n => peoes[n] = [-1, -1, -1, -1]);
-    return { peoes, dado: null, ultimoDado: null, jogando: null, aviso: null };
+    return { peoes, dado: null, aviso: null };
   },
-  primeiroTurno(estado, jogadores) { return jogadores[0]; },
+  primeiroTurno(e, j) { return j[0]; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const minhaVez = sala.turno === eu;
@@ -1653,28 +1578,27 @@ JOGOS.ludo = {
     let html = `<div class="ludo-wrap" id="ludoWrap">`;
     for (let r = 0; r < 15; r++) for (let c = 0; c < 15; c++) {
       const base = baseDeCelula(r, c);
-      if (base !== null) {
-        html += `<div class="ludo-cel" style="left:${c * 100 / 15}%;top:${r * 100 / 15}%;background:${corDe(sala.jogadores[base])}22"></div>`;
-      }
+      if (base !== null) html += `<div class="ludo-cel" style="left:${c*100/15}%;top:${r*100/15}%;background:${corDe(sala.jogadores[base])}22"></div>`;
     }
     LUDO_PATH.forEach(([r, c], i) => {
       const dono = LUDO_START.indexOf(i);
       const seguro = LUDO_SEGURO.has(i);
-      html += `<div class="ludo-cel" style="left:${c * 100 / 15}%;top:${r * 100 / 15}%;
+      html += `<div class="ludo-cel" style="left:${c*100/15}%;top:${r*100/15}%;
         background:${dono >= 0 ? corDe(sala.jogadores[dono]) + "55" : "var(--card)"};
         border:1px solid var(--linha);border-radius:3px">
         ${seguro ? `<span class="ludo-estrela">★</span>` : ""}</div>`;
     });
     LUDO_HOME.forEach((col, p) => col.forEach(([r, c]) => {
-      html += `<div class="ludo-cel" style="left:${c * 100 / 15}%;top:${r * 100 / 15}%;
+      html += `<div class="ludo-cel" style="left:${c*100/15}%;top:${r*100/15}%;
         background:${corDe(sala.jogadores[p])}44;border:1px solid var(--linha);border-radius:3px"></div>`;
     }));
-    html += `<div class="ludo-cel" style="left:${7 * 100 / 15}%;top:${7 * 100 / 15}%;width:${100 / 15}%;height:${100 / 15}%;
+    html += `<div class="ludo-cel" style="left:${7*100/15}%;top:${7*100/15}%;width:${100/15}%;height:${100/15}%;
       background:var(--gold);border-radius:4px;font-size:12px">🏁</div>`;
+
     sala.jogadores.forEach((n, p) => {
-      e.peoes[n].forEach((passo, k) => {
-        const [r, c] = posicaoPino(n, p, passo, k, e, sala);
-        html += `<div class="ludo-cel" data-pino="${n}-${k}" style="left:${c * 100 / 15}%;top:${r * 100 / 15}%">
+      (e.peoes[n] || []).forEach((passo, k) => {
+        const [r, c] = posicaoPino(n, p, passo, k);
+        html += `<div class="ludo-cel" data-pino="${n}-${k}" style="left:${c*100/15}%;top:${r*100/15}%">
           <div class="ludo-pino" style="background:${corDe(n)}"></div></div>`;
       });
     });
@@ -1699,7 +1623,7 @@ JOGOS.ludo = {
         </div>
         ${e.aviso ? `<div class="text-center text-xs mt-1" style="color:var(--ink2)">${esc(e.aviso)}</div>` : ""}
         <div class="mt-3 text-xs text-center" style="color:var(--ink2)">
-          ${sala.jogadores.map(n => `${emojiDe(n)} ${e.peoes[n].filter(p => p === 56).length}/4`).join(" · ")}
+          ${sala.jogadores.map(n => `${emojiDe(n)} ${(e.peoes[n] || []).filter(p => p === 56).length}/4`).join(" · ")}
         </div>
       </div>`;
 
@@ -1708,17 +1632,16 @@ JOGOS.ludo = {
       tocarSom("playDiceRoll");
       const dado = rolarDado();
       const el = $("#dado");
-      el.classList.add("dado-girando");
-      el.textContent = dado;
+      el.classList.add("dado-girando"); el.textContent = dado;
       setTimeout(() => el.classList.remove("dado-girando"), 700);
-      const possiveis = peoesJogaveis(sala, e, eu, dado);
+      const possiveis = peoesJogaveis(e, eu, dado);
       vibrar(30);
       await salvarSala({
         estado: { ...e, dado, aviso: possiveis.length ? null : "Nenhum peão pode andar… passando a vez" }
       });
       if (!possiveis.length) {
         setTimeout(async () => {
-          const prox = dado === 6 ? eu : proximoTurno(sala);
+          const prox = dado === 6 ? eu : proximoTurno(S.sala);
           await salvarSala({ estado: { ...S.sala.estado, dado: null, aviso: null }, turno: prox });
         }, 900);
       }
@@ -1728,7 +1651,7 @@ JOGOS.ludo = {
       $$("[data-pino]").forEach(el => el.addEventListener("click", async () => {
         const [n, k] = el.dataset.pino.split("-");
         if (n !== eu) { tocarSom("playErrorSound"); return; }
-        if (!peoesJogaveis(sala, S.sala.estado, eu, S.sala.estado.dado).includes(+k)) {
+        if (!peoesJogaveis(S.sala.estado, eu, S.sala.estado.dado).includes(+k)) {
           tocarSom("playErrorSound"); toast("Esse peão não pode andar com esse dado"); return;
         }
         await moverPinoLudo(sala, +k, S.sala.estado.dado);
@@ -1743,19 +1666,17 @@ function baseDeCelula(r, c) {
   if (r > 8 && c < 6) return 3;
   return null;
 }
-function posicaoPino(nome, p, passo, k, e, sala) {
+function posicaoPino(nome, p, passo, k) {
   if (passo === -1) { const b = LUDO_BASE[p][k]; return [b[0], b[1]]; }
   if (passo >= 51) {
     if (passo === 56) return [7, 7];
-    const h = LUDO_HOME[p][passo - 51];
-    return h;
+    return LUDO_HOME[p][passo - 51];
   }
-  const i = (LUDO_START[p] + passo) % 52;
-  return LUDO_PATH[i];
+  return LUDO_PATH[(LUDO_START[p] + passo) % 52];
 }
-function peoesJogaveis(sala, e, nome, dado) {
+function peoesJogaveis(e, nome, dado) {
   const out = [];
-  e.peoes[nome].forEach((passo, k) => {
+  (e.peoes[nome] || []).forEach((passo, k) => {
     if (passo === 56) return;
     if (passo === -1) { if (dado === 6) out.push(k); return; }
     if (passo + dado <= 56) out.push(k);
@@ -1763,7 +1684,11 @@ function peoesJogaveis(sala, e, nome, dado) {
   return out;
 }
 async function moverPinoLudo(sala, k, dado) {
-  const e = { ...sala.estado, peoes: { ...sala.estado.peoes, [S.usuario]: [...sala.estado.peoes[S.usuario]] } };
+  const estado = sala.estado;
+  const e = {
+    ...estado,
+    peoes: { ...estado.peoes, [S.usuario]: [...estado.peoes[S.usuario]] }
+  };
   const antes = e.peoes[S.usuario][k];
   const depois = antes === -1 ? 0 : antes + dado;
   e.peoes[S.usuario][k] = depois;
@@ -1775,9 +1700,9 @@ async function moverPinoLudo(sala, k, dado) {
     if (!LUDO_SEGURO.has(casaIdx)) {
       sala.jogadores.forEach((outro, oi) => {
         if (outro === S.usuario) return;
+        e.peoes[outro] = [...(e.peoes[outro] || [-1,-1,-1,-1])];
         e.peoes[outro].forEach((passo, ok) => {
           if (passo >= 0 && passo <= 50 && (LUDO_START[oi] + passo) % 52 === casaIdx) {
-            e.peoes[outro] = [...e.peoes[outro]];
             e.peoes[outro][ok] = -1;
             capturou = true;
           }
@@ -1799,9 +1724,7 @@ async function moverPinoLudo(sala, k, dado) {
 }
 function rolarDado() { return 1 + Math.floor(Math.random() * 6); }
 
-/* ============================================================
-   10. XADREZ
-   ============================================================ */
+/* ---------- XADREZ ---------- */
 const PECAS_UNI = {
   wK: "♔", wQ: "♕", wR: "♖", wB: "♗", wN: "♘", wP: "♙",
   bK: "♚", bQ: "♛", bR: "♜", bB: "♝", bN: "♞", bP: "♟"
@@ -1828,19 +1751,16 @@ JOGOS.xadrez = {
       casas: tabuleiroInicialXadrez(),
       cores: { w: jogadores[0], b: jogadores[1] },
       roque: { K: true, Q: true, k: true, q: true },
-      enPassant: null,
-      selecionada: null,
-      ultimoLance: null,
-      historico: [],
-      xeque: false,
-      pedidoDesfazer: null
+      enPassant: null, selecionada: null, ultimoLance: null,
+      historico: [], xeque: false, pedidoDesfazer: null
     };
   },
-  primeiroTurno(estado) { return estado.cores.w; },
+  primeiroTurno(e) { return e.cores.w; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const minhaCor = e.cores.w === eu ? "w" : "b";
     const minhaVez = sala.turno === eu && !sala.vencedor;
+    corPendente = minhaCor; // para movimentosLegais
     const movs = e.selecionada !== null ? movimentosLegais(e).filter(m => m.de === e.selecionada) : [];
     const emXeque = estaEmXeque(e, corDoTurno(e, sala.turno));
 
@@ -1894,33 +1814,14 @@ JOGOS.xadrez = {
     }));
     $("#xadDesfazer").onclick = async () => {
       if (!e.historico.length) return;
-      if (!await confirmar("Desfazer", "Pedir para desfazer o último lance? O adversário precisa aceitar.")) return;
+      if (!await confirmar("Desfazer", "Pedir para desfazer o último lance?")) return;
       await salvarSala({ estado: { ...e, pedidoDesfazer: eu } });
-      toast("Pedido enviado pro adversário 🤝");
+      toast("Pedido enviado 🤝");
     };
-    if (e.pedidoDesfazer && e.pedidoDesfazer !== eu && !sala.vencedor) {
-      setTimeout(async () => {
-        const ok = await confirmar("Desfazer lance", `${nomeDe(e.pedidoDesfazer)} quer desfazer o último lance. Aceitar?`);
-        const novo = { ...S.sala.estado, pedidoDesfazer: null };
-        if (ok && novo.historico.length) {
-          const ult = novo.historico[novo.historico.length - 1];
-          novo.casas = ult.casasAntes;
-          novo.roque = ult.roqueAntes;
-          novo.enPassant = ult.enPassantAntes;
-          novo.historico = novo.historico.slice(0, -1);
-          novo.ultimoLance = null;
-          novo.selecionada = null;
-          await salvarSala({ estado: novo, turno: e.pedidoDesfazer });
-          toast("Lance desfeito 🤝");
-        } else {
-          await salvarSala({ estado: novo });
-          if (!ok) toast("Pedido recusado");
-        }
-      }, 300);
-    }
   }
 };
 const corDoTurno = (e, nome) => e.cores.w === nome ? "w" : "b";
+let corPendente = "w";
 
 function movimentosPseudo(e, cor) {
   const out = [];
@@ -1955,12 +1856,12 @@ function movimentosPseudo(e, cor) {
       if (tipo === "K") {
         const base = cor === "w" ? 60 : 4;
         const lado = cor === "w" ? "KQ" : "kq";
-        if (e.roque[lado[0]] && !e.casas[base + 1] && !e.casas[base + 2] &&
-            !estaEmXeque(e, cor) && !casaAtacada(e, base + 1, cor) && !casaAtacada(e, base + 2, cor))
-          out.push({ ...novoMov(i, base + 2, null), roque: "K" });
-        if (e.roque[lado[1]] && !e.casas[base - 1] && !e.casas[base - 2] && !e.casas[base - 3] &&
-            !estaEmXeque(e, cor) && !casaAtacada(e, base - 1, cor) && !casaAtacada(e, base - 2, cor))
-          out.push({ ...novoMov(i, base - 2, null), roque: "Q" });
+        if (e.roque[lado[0]] && !e.casas[base+1] && !e.casas[base+2] &&
+            !estaEmXeque(e, cor) && !casaAtacada(e, base+1, cor) && !casaAtacada(e, base+2, cor))
+          out.push({ ...novoMov(i, base+2, null), roque: "K" });
+        if (e.roque[lado[1]] && !e.casas[base-1] && !e.casas[base-2] && !e.casas[base-3] &&
+            !estaEmXeque(e, cor) && !casaAtacada(e, base-1, cor) && !casaAtacada(e, base-2, cor))
+          out.push({ ...novoMov(i, base-2, null), roque: "Q" });
       }
     } else {
       const dirs = tipo === "B" ? CHESS_DIR.B : tipo === "R" ? CHESS_DIR.R : CHESS_DIR.B.concat(CHESS_DIR.R);
@@ -1984,14 +1885,11 @@ function aplicarMov(e, mov) {
   const cor = peca[0], tipo = peca[1];
   casas[mov.para] = mov.promocao ? cor + mov.promocao : peca;
   casas[mov.de] = null;
-  if (mov.enPassant) {
-    const capturada = mov.para + (cor === "w" ? 8 : -8);
-    casas[capturada] = null;
-  }
+  if (mov.enPassant) casas[mov.para + (cor === "w" ? 8 : -8)] = null;
   if (mov.roque) {
     const base = cor === "w" ? 56 : 0;
-    if (mov.roque === "K") { casas[base + 5] = null; casas[base + 4] = cor + "R"; }
-    else { casas[base + 3] = null; casas[base + 4] = cor + "R"; }
+    if (mov.roque === "K") { casas[base+5] = null; casas[base+4] = cor + "R"; }
+    else { casas[base+3] = null; casas[base+4] = cor + "R"; }
   }
   const roque = { ...e.roque };
   if (tipo === "K") { if (cor === "w") { roque.K = roque.Q = false; } else { roque.k = roque.q = false; } }
@@ -2005,13 +1903,12 @@ function aplicarMov(e, mov) {
     ? (mov.de + mov.para) / 2 : null;
   return { ...e, casas, roque, enPassant };
 }
-let corPendente = "w";
-function corTurnoDe(e) { return corPendente; }
 function movimentosLegais(e) {
-  const cor = corTurnoDe(e);
+  const cor = corPendente;
   return movimentosPseudo(e, cor).filter(m => {
     const depois = aplicarMov(e, m);
-    return !estaEmXeque(depois, cor);
+    const salvo = corPendente;
+    return !estaEmXeque(depois, cor) && (corPendente = salvo, true);
   });
 }
 function estaEmXeque(e, cor) {
@@ -2040,11 +1937,8 @@ async function executarLanceXadrez(sala, e, mov) {
              </div>`,
       botoes: [{ texto: "Dama", valor: "Q", classe: "btn-p" }],
       fecharFora: false,
-      // Cada botão de peça fecha o modal com o valor escolhido.
       onMount(caixa, fechar) {
-        caixa.querySelectorAll("[data-prom]").forEach(b => b.addEventListener("click", () => {
-          fechar(b.dataset.prom);
-        }));
+        caixa.querySelectorAll("[data-prom]").forEach(b => b.addEventListener("click", () => fechar(b.dataset.prom)));
       }
     });
     escolha = r || "Q";
@@ -2060,10 +1954,11 @@ async function executarLanceXadrez(sala, e, mov) {
   novo.ultimoLance = { de: mov.de, para: mov.para };
 
   const outraCor = cor === "w" ? "b" : "w";
-  corPendente = outraCor;
+  const salvo = corPendente; corPendente = outraCor;
   const legaisOutro = movimentosLegais({ ...novo });
   const emXeque = estaEmXeque(novo, outraCor);
   const semLances = legaisOutro.length === 0;
+  corPendente = salvo;
 
   if (captura) { tocarSom("playCapture"); vibrar(60); } else { tocarSom("playPieceMove"); vibrar(20); }
   novo.xeque = emXeque;
@@ -2078,22 +1973,18 @@ async function executarLanceXadrez(sala, e, mov) {
     tocarSom("playPiecePlace");
     return salvarSala({ estado: novo, empate: true, vencedor: null, status: "finalizada" });
   }
-  if (emXeque) { tocarSom("playYourTurn"); notificar("Xeque!", `${nomeDe(proximo)} está em xeque ${emojiDe(proximo)}`); }
+  if (emXeque) { tocarSom("playYourTurn"); toast(`Xeque em ${nomeDe(proximo)}!`); }
 
   await salvarSala({ estado: novo, turno: proximo, vencedor: null, empate: false });
-  corPendente = outraCor;
 }
 const nomeCasa = i => "abcdefgh"[i % 8] + (8 - Math.floor(i / 8));
 
-/* ============================================================
-   11. PIFE-PAF
-   ============================================================ */
+/* ---------- PIFE-PAF ---------- */
 const NAIPES = ["♠", "♥", "♦", "♣"];
 const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const VALOR_RANK = Object.fromEntries(RANKS.map((r, i) => [r, i + 1]));
 function baralhoPife() {
-  const cartas = [];
-  let id = 0;
+  const cartas = []; let id = 0;
   NAIPES.forEach(n => RANKS.forEach(r => cartas.push({ id: id++, r, n })));
   cartas.push({ id: id++, r: "JOKER", n: "★" });
   cartas.push({ id: id++, r: "JOKER", n: "★" });
@@ -2109,9 +2000,9 @@ JOGOS.pifpaf = {
     jogadores.forEach((n, i) => maos[n] = baralho.slice(i * 9, i * 9 + 9));
     const monte = baralho.slice(jogadores.length * 9);
     const lixo = [monte.pop()];
-    return { maos, monte, lixo, comprou: false, cartaSelecionada: null, vencedorMao: null, combinacoes: null };
+    return { maos, monte, lixo, comprou: false, vencedorMao: null };
   },
-  primeiroTurno(estado, jogadores) { return jogadores[0]; },
+  primeiroTurno(e, j) { return j[0]; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const minhaVez = sala.turno === eu;
@@ -2140,7 +2031,7 @@ JOGOS.pifpaf = {
         <div class="flex flex-wrap gap-2 justify-center min-h-[92px]">
           ${mao.map(c => `<div data-carta="${c.id}" class="${minhaVez && e.comprou ? "cursor-pointer" : ""}">${cartaHTML(c)}</div>`).join("")}
         </div>
-        ${podeBater ? `<button id="pfBater" class="btn btn-p w-full mt-4">Bater! 🎉 (${esc(descreverCombinacao(podeBater))})</button>` : ""}
+        ${podeBater ? `<button id="pfBater" class="btn btn-p w-full mt-4">Bater! 🎉</button>` : ""}
         <div class="mt-3 text-xs text-center" style="color:var(--ink2)">
           ${sala.jogadores.map(n => `${emojiDe(n)} ${esc(nomeDe(n))}: ${e.maos[n]?.length || 0}`).join(" · ")}
         </div>
@@ -2155,7 +2046,7 @@ JOGOS.pifpaf = {
       else {
         if (!monte.length) {
           const topo = lixo.pop();
-          monte.push(...lixo.splice(0, lixo.length).sort(() => Math.random() - .5));
+          monte.push(...lixo.splice(0).sort(() => Math.random() - .5));
           lixo.push(topo);
         }
         carta = monte.pop();
@@ -2186,16 +2077,13 @@ JOGOS.pifpaf = {
       confete(1.4); tocarSom("playVictory");
       await modal({
         titulo: "Bateu! 🃏",
-        html: `<p class="mb-3"><b>${esc(nomeDe(eu))}</b> organizou tudo assim:</p>
+        html: `<p class="mb-3"><b>${esc(nomeDe(eu))}</b> organizou assim:</p>
                ${comb.map(g => `<div class="mb-2 p-2 rounded-xl flex gap-1" style="background:var(--bg2)">
                   ${g.map(c => `<span class="text-lg">${c.r === "JOKER" ? "🃏" : c.r + c.n}</span>`).join("")}
                 </div>`).join("")}`,
         botoes: [{ texto: "Show!", valor: 1, classe: "btn-p" }]
       });
-      await salvarSala({
-        estado: { ...e, vencedorMao: eu, combinacoes: comb.map(g => g.map(c => c.r + c.n)) },
-        vencedor: eu, status: "finalizada"
-      });
+      await salvarSala({ estado: { ...e, vencedorMao: eu }, vencedor: eu, status: "finalizada" });
     });
   }
 };
@@ -2210,8 +2098,7 @@ function cartaHTML(c) {
 function acharCombinacao(cartas) {
   if (cartas.length === 10) {
     for (let i = 0; i < cartas.length; i++) {
-      const resto = cartas.filter((_, j) => j !== i);
-      const r = particionar(resto);
+      const r = particionar(cartas.filter((_, j) => j !== i));
       if (r) return r;
     }
     return null;
@@ -2234,8 +2121,7 @@ function particionar(cartas) {
         }
     return false;
   };
-  const ok = combinar(cartas, []);
-  return ok ? resultado : null;
+  return combinar(cartas, []) ? resultado : null;
 }
 function grupoValido(g) {
   const jokers = g.filter(c => c.r === "JOKER").length;
@@ -2247,19 +2133,14 @@ function grupoValido(g) {
       const vals = reais.map(c => mapa[c.r]).sort((a, b) => a - b);
       if (new Set(vals).size !== vals.length) continue;
       let faltando = 0;
-      for (let i = 1; i < vals.length; i++) faltando += vals[i] - vals[i - 1] - 1;
+      for (let i = 1; i < vals.length; i++) faltando += vals[i] - vals[i-1] - 1;
       if (faltando <= jokers && vals[vals.length - 1] - vals[0] <= 4) return true;
     }
   }
   return false;
 }
-function descreverCombinacao(comb) {
-  return comb.map(g => g.map(c => c.r === "JOKER" ? "🃏" : c.r + c.n).join(" ")).join(" | ");
-}
 
-/* ============================================================
-   12. 21 (Blackjack simplificado)
-   ============================================================ */
+/* ---------- 21 (Blackjack) ---------- */
 function baralho21() {
   const c = []; let id = 0;
   NAIPES.forEach(n => RANKS.forEach(r => c.push({ id: id++, r, n })));
@@ -2281,17 +2162,14 @@ JOGOS.vinteum = {
   descricaoLonga: "Jogue contra a banca. Cada um começa com 100 fichas e aposta por rodada.",
   novoEstado(jogadores) {
     return {
-      baralho: [],
-      banca: [],
+      baralho: [], banca: [],
       maos: Object.fromEntries(jogadores.map(n => [n, []])),
       fichas: Object.fromEntries(jogadores.map(n => [n, 100])),
       apostas: Object.fromEntries(jogadores.map(n => [n, 0])),
-      fase: "apostas",
-      resultados: null,
-      rodada: 1
+      fase: "apostas", resultados: null, rodada: 1
     };
   },
-  primeiroTurno(estado, jogadores) { return jogadores[0]; },
+  primeiroTurno(e, j) { return j[0]; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const minhaVez = sala.turno === eu;
@@ -2304,11 +2182,10 @@ JOGOS.vinteum = {
           <div class="text-xs mb-1" style="color:var(--ink2)">Banca ${e.banca.length ? `(${valorMao(e.banca)})` : ""}</div>
           <div class="flex gap-1 justify-center flex-wrap">
             ${e.banca.map((c, i) => e.fase === "jogando" && i === 1
-              ? `<div class="carta verso"></div>`
-              : cartaHTML(c)).join("") || `<span class="text-sm" style="color:var(--ink2)">aguardando…</span>`}
+              ? `<div class="carta verso"></div>` : cartaHTML(c)).join("") ||
+              `<span class="text-sm" style="color:var(--ink2)">aguardando…</span>`}
           </div>
         </div>
-
         <div class="space-y-2 mb-4">
           ${sala.jogadores.map(n => `
             <div class="p-2 rounded-xl flex items-center gap-2" style="background:${n === sala.turno ? corDe(n) + "22" : "var(--bg2)"}">
@@ -2329,7 +2206,7 @@ JOGOS.vinteum = {
               ${[5, 10, 25].map(v => `<button class="btn ${minhaAposta === v ? "btn-p" : "btn-s"}" data-aposta="${v}"
                  ${e.fichas[eu] < v ? "disabled style=opacity:.4" : ""}>${v} 🪙</button>`).join("")}
             </div>
-            ${minhaAposta ? `<p class="text-xs mt-2" style="color:var(--ink2)">Aposta feita: ${minhaAposta} fichas. Aguardando os outros…</p>` : ""}
+            ${minhaAposta ? `<p class="text-xs mt-2" style="color:var(--ink2)">Aposta feita: ${minhaAposta} fichas.</p>` : ""}
           </div>` : ""}
 
         ${e.fase === "jogando" ? `
@@ -2339,7 +2216,7 @@ JOGOS.vinteum = {
               <button id="bjParar" class="btn btn-s flex-1">Parar ✋</button>
               ${minhaMao.length === 2 && e.fichas[eu] >= minhaAposta
                 ? `<button id="bjDobrar" class="btn btn-g">Dobrar ×2</button>` : ""}
-            ` : `<p class="font-bold" style="color:${corDe(sala.turno)}">Vez de ${esc(nomeDe(sala.turno))} ${emojiDe(sala.turno)}</p>`}
+            ` : `<p class="font-bold" style="color:${corDe(sala.turno)}">Vez de ${esc(nomeDe(sala.turno))}</p>`}
           </div>` : ""}
 
         ${e.fase === "fim" && e.resultados ? `
@@ -2359,8 +2236,10 @@ JOGOS.vinteum = {
       const v = +b.dataset.aposta;
       tocarSom("playClick");
       const apostas = { ...e.apostas, [eu]: v };
-      const todos = sala.jogadores.every(n => apostas[n] > 0);
-      if (!todos) { await salvarSala({ estado: { ...e, apostas } }); return; }
+      if (!sala.jogadores.every(n => apostas[n] > 0)) {
+        await salvarSala({ estado: { ...e, apostas } });
+        return;
+      }
       const baralho = baralho21();
       const maos = { ...e.maos };
       sala.jogadores.forEach(n => maos[n] = [baralho.pop(), baralho.pop()]);
@@ -2381,82 +2260,75 @@ JOGOS.vinteum = {
       if (total > 21) {
         tocarSom("playDefeat");
         toast("Estourou! 😅 Bora de novo na próxima");
-        return passarVez21({ ...e, baralho, maos }, sala, true);
+        return passarVez21({ ...e, baralho, maos }, sala);
       }
-      if (total === 21) return passarVez21({ ...e, baralho, maos }, sala, false);
+      if (total === 21) return passarVez21({ ...e, baralho, maos }, sala);
       await salvarSala({ estado: { ...e, baralho, maos } });
     });
-    $("#bjParar")?.addEventListener("click", () => passarVez21(e, sala, false));
+    $("#bjParar")?.addEventListener("click", () => passarVez21(e, sala));
     $("#bjDobrar")?.addEventListener("click", async () => {
       const baralho = [...e.baralho];
       const maos = { ...e.maos, [eu]: [...e.maos[eu], baralho.pop()] };
       const fichas = { ...e.fichas, [eu]: e.fichas[eu] - e.apostas[eu] };
       const apostas = { ...e.apostas, [eu]: e.apostas[eu] * 2 };
       tocarSom("playPieceMove");
-      const total = valorMao(maos[eu]);
-      if (total > 21) return passarVez21({ ...e, baralho, maos, fichas, apostas }, sala, true);
-      passarVez21({ ...e, baralho, maos, fichas, apostas }, sala, false);
+      passarVez21({ ...e, baralho, maos, fichas, apostas }, sala);
     });
     $("#bjNova")?.addEventListener("click", async () => {
       await salvarSala({
-        estado: { ...e, fase: "apostas", apostas: Object.fromEntries(sala.jogadores.map(n => [n, 0])),
-                  maos: Object.fromEntries(sala.jogadores.map(n => [n, []])), banca: [], resultados: null,
-                  rodada: (e.rodada || 1) + 1 },
+        estado: { ...e, fase: "apostas",
+          apostas: Object.fromEntries(sala.jogadores.map(n => [n, 0])),
+          maos: Object.fromEntries(sala.jogadores.map(n => [n, []])),
+          banca: [], resultados: null, rodada: (e.rodada || 1) + 1 },
         turno: sala.jogadores[0], vencedor: null, empate: false, status: "jogando"
       });
       toast("Nova rodada! Faz sua aposta 🪙");
     });
   }
 };
-async function passarVez21(e, sala, estourou) {
+async function passarVez21(e, sala) {
   const idx = sala.jogadores.indexOf(sala.turno);
   const proximo = sala.jogadores[idx + 1];
-  if (proximo) {
-    return salvarSala({ estado: e, turno: proximo });
-  }
-  const baralho = [...e.baralho];
-  const banca = [...e.banca];
+  if (proximo) return salvarSala({ estado: e, turno: proximo });
+
+  const baralho = [...e.baralho], banca = [...e.banca];
   while (valorMao(banca) < 17 && baralho.length) banca.push(baralho.pop());
   const totalBanca = valorMao(banca);
-  const resultados = {};
-  const fichas = { ...e.fichas };
+  const resultados = {}, fichas = { ...e.fichas };
   let algumGanhou = null;
   sala.jogadores.forEach(n => {
     const t = valorMao(e.maos[n] || []);
-    if (t > 21) { resultados[n] = "estourou"; }
-    else if (totalBanca > 21 || t > totalBanca) { resultados[n] = "ganhou"; fichas[n] += (e.apostas[n] || 0) * 2; algumGanhou = algumGanhou || n; }
+    if (t > 21) resultados[n] = "estourou";
+    else if (totalBanca > 21 || t > totalBanca) {
+      resultados[n] = "ganhou";
+      fichas[n] += (e.apostas[n] || 0) * 2;
+      algumGanhou = algumGanhou || n;
+    }
     else if (t === totalBanca) { resultados[n] = "empate"; fichas[n] += (e.apostas[n] || 0); }
-    else { resultados[n] = "perdeu"; }
+    else resultados[n] = "perdeu";
   });
   tocarSom(algumGanhou ? "playVictory" : "playDefeat");
   if (algumGanhou) confete(1);
   await salvarSala({
     estado: { ...e, baralho, banca, resultados, fichas, fase: "fim" },
-    vencedor: algumGanhou, empate: !algumGanhou, status: algumGanhou ? "finalizada" : "jogando"
+    vencedor: algumGanhou, empate: !algumGanhou,
+    status: algumGanhou ? "finalizada" : "jogando"
   });
 }
 
-/* ============================================================
-   13. FORCA
-   ============================================================ */
+/* ---------- FORCA ---------- */
 JOGOS.forca = {
   nome: "Forca", icone: "🪢", minJogadores: 2, maxJogadores: 4,
   descricao: "Palavras da nossa casa",
   descricaoLonga: "Um irmão cria a palavra secreta e os outros chutam letra por letra. Seis erros e o mestre leva!",
   novoEstado(jogadores) {
     return {
-      mestre: jogadores[0],
-      palavra: null,
-      categoria: null,
-      dica: null,
-      letras: [],
-      erros: 0,
-      vencedorRodada: null,
-      adivinhadores: jogadores.slice(1),
-      historico: []
+      mestre: jogadores[0], palavra: null, categoria: null, dica: null,
+      letras: [], erros: 0, vencedorRodada: null,
+      adivinhadores: jogadores.slice(1), historico: []
     };
   },
-  primeiroTurno(estado, jogadores) { return jogadores[0]; },
+  primeiroTurno(e, j) { return j[0]; },
   render(area, sala) {
     const e = sala.estado, eu = S.usuario;
     const souMestre = e.mestre === eu;
@@ -2481,9 +2353,7 @@ JOGOS.forca = {
             <button id="fcCriar" class="btn btn-p w-full">Esconder palavra 🙈</button>
           </div>` : `<p class="text-center py-6" style="color:var(--ink2)">
             Esperando ${esc(nomeDe(e.mestre))} escolher a palavra secreta… 🤫</p>`) : `
-          <div class="flex justify-center mb-3">
-            ${svgForca(e.erros)}
-          </div>
+          <div class="flex justify-center mb-3">${svgForca(e.erros)}</div>
           <div class="text-center text-xs mb-2" style="color:var(--ink2)">
             ${esc(e.categoria || "")} ${e.dica ? "· dica: " + esc(e.dica) : ""} · mestre: ${emojiDe(e.mestre)} ${esc(nomeDe(e.mestre))}
           </div>
@@ -2497,7 +2367,7 @@ JOGOS.forca = {
               const usada = e.letras.includes(l);
               const acertou = usada && (e.palavra || "").includes(l);
               return `<button class="chip" data-letra="${l}" ${usada || !minhaVez ? "disabled" : ""}
-                style="${usada ? (acertou ? "background:var(--danilo);color:#fff" : "background:var(--giovanna);color:#fff") : ""}">
+                style="${usada ? (acertou ? "background:#5E9B87;color:#fff" : "background:#E08AA6;color:#fff") : ""}">
                 ${l}</button>`;
             }).join("")}
           </div>
@@ -2513,10 +2383,7 @@ JOGOS.forca = {
       const categoria = $("#fcCat").value;
       const dica = ($("#fcDica").value || "").trim();
       tocarSom("playPiecePlace");
-      await salvarSala({
-        estado: { ...e, palavra, categoria, dica },
-        turno: e.adivinhadores[0]
-      });
+      await salvarSala({ estado: { ...e, palavra, categoria, dica }, turno: e.adivinhadores[0] });
       toast("Palavra escondida! Vamos adivinhar 🤫");
     });
 
@@ -2533,14 +2400,16 @@ JOGOS.forca = {
       if (!faltam.length) {
         confete(1.2); tocarSom("playVictory");
         return salvarSala({
-          estado: { ...e, letras, erros, vencedorRodada: eu, historico: [...(e.historico || []), { palavra: e.palavra, quem: eu }] },
+          estado: { ...e, letras, erros, vencedorRodada: eu,
+            historico: [...(e.historico || []), { palavra: e.palavra, quem: eu }] },
           vencedor: eu, status: "finalizada"
         });
       }
       if (erros >= 6) {
         tocarSom("playDefeat");
         return salvarSala({
-          estado: { ...e, letras, erros, vencedorRodada: e.mestre, historico: [...(e.historico || []), { palavra: e.palavra, quem: e.mestre }] },
+          estado: { ...e, letras, erros, vencedorRodada: e.mestre,
+            historico: [...(e.historico || []), { palavra: e.palavra, quem: e.mestre }] },
           vencedor: e.mestre, status: "finalizada"
         });
       }
@@ -2558,7 +2427,7 @@ JOGOS.forca = {
       estado.adivinhadores = sala.jogadores.filter(n => n !== novoMestre);
       estado.historico = e.historico || [];
       await salvarSala({ estado, turno: novoMestre, vencedor: null, empate: false, status: "jogando" });
-      toast(`Agora quem escolhe a palavra é ${nomeDe(novoMestre)} ${emojiDe(novoMestre)}`);
+      toast(`Agora quem escolhe é ${nomeDe(novoMestre)} ${emojiDe(novoMestre)}`);
     });
   }
 };
@@ -2577,19 +2446,7 @@ function svgForca(erros) {
   </svg>`;
 }
 
-/* ============================================================
-   14. CHAT (comum a todos) — já integrado na tela de jogo
-   ============================================================ */
-async function carregarChatGlobal() {
-  if (!S.salaId) { toast("Entre numa mesa pra conversar 💬"); return; }
-  S.chatAberto = !S.chatAberto;
-  const painel = $("#chatPainel");
-  if (painel) painel.classList.toggle("aberto", S.chatAberto);
-}
-
-/* ============================================================
-   15. PLACAR GERAL (Chart.js)
-   ============================================================ */
+/* 15. PLACAR GERAL */
 function renderPlacar() {
   const linhas = calcularPlacarGeral();
   $("#conteudo").innerHTML = `
@@ -2597,9 +2454,7 @@ function renderPlacar() {
     <h1 class="titulo text-3xl font-bold">Placar da família 🏆</h1>
     <p class="mt-1 mb-5" style="color:var(--ink2)">Aqui a gente comemora junto — sem deboche, só alegria.</p>
 
-    <div class="card p-4 mb-4">
-      <canvas id="graficoPlacar" height="200"></canvas>
-    </div>
+    <div class="card p-4 mb-4"><canvas id="graficoPlacar" height="200"></canvas></div>
 
     <div class="space-y-3">
       ${linhas.map((l, i) => `
@@ -2621,10 +2476,10 @@ function renderPlacar() {
       <h2 class="titulo text-xl font-bold mb-2">Troféu da semana 🏅</h2>
       <p class="text-sm" style="color:var(--ink2)">
         ${(() => {
-          const melhor = [...linhas].sort((a, b) => b.total - a.total)[0];
+          const melhor = linhas[0];
           return melhor && melhor.total
             ? `${emojiDe(melhor.nome)} <b>${esc(nomeDe(melhor.nome))}</b> está na frente com ${melhor.total} vitória(s)!`
-            : "Ainda sem vitórias registradas nesta semana. Bora jogar? 🎲";
+            : "Ainda sem vitórias registradas. Bora jogar? 🎲";
         })()}
       </p>
     </div>
@@ -2657,9 +2512,7 @@ function renderPlacar() {
   $("#plVoltar").onclick = () => irPara("home");
 }
 
-/* ============================================================
-   17. CONFIGURAÇÕES
-   ============================================================ */
+/* 16. CONFIGURAÇÕES */
 function renderConfig() {
   $("#conteudo").innerHTML = `
   <div class="px-4 pb-28 pt-3 max-w-3xl mx-auto fadeIn">
@@ -2704,9 +2557,7 @@ function renderConfig() {
 
     <div class="card p-4 mb-3">
       <h2 class="font-extrabold mb-2">Segurança e privacidade 🔒</h2>
-      <p class="text-sm mb-3" style="color:var(--ink2)">
-        Seus dados ficam na sua conta Firebase. Só a família tem acesso.
-      </p>
+      <p class="text-sm mb-3" style="color:var(--ink2)">Seus dados ficam na sua conta Firebase. Só a família tem acesso.</p>
       <button id="cfgRegras" class="btn btn-s w-full">Ver regras do Firestore</button>
     </div>
 
@@ -2720,31 +2571,20 @@ function renderConfig() {
   </div>`;
 
   $("#cfgSalvarNomes").onclick = async () => {
-    const campos = $$("[data-apelido]");
-    for (const i of campos) {
+    for (const i of $$("[data-apelido]"))
       await updateDoc(refPerfil(i.dataset.apelido), { apelido_exibido: i.value.trim() || nomeDe(i.dataset.apelido) });
-    }
     toast("Apelidos atualizados 💙💚💗💜");
   };
   $("#cfgSalvarPin").onclick = async () => {
     const v = ($("#cfgPin").value || "").trim();
     if (!/^\d{4}$/.test(v)) { tocarSom("playErrorSound"); toast("O PIN precisa ter 4 dígitos"); return; }
-    await atualizarPin(v);
-    $("#cfgPin").value = "";
-    toast("PIN atualizado 🔒");
+    await atualizarPin(v); $("#cfgPin").value = ""; toast("PIN atualizado 🔒");
   };
   $("#cfgSom").onchange = e => { S.som = e.target.checked; localStorage.setItem("mf_som", S.som ? "1" : "0"); };
-  $("#cfgNotif").onchange = async e => {
-    S.notif = e.target.checked;
-    localStorage.setItem("mf_notif", S.notif ? "1" : "0");
-    if (S.notif && "Notification" in window && Notification.permission === "default") {
-      try { await Notification.requestPermission(); } catch (err) {}
-    }
-  };
+  $("#cfgNotif").onchange = e => { S.notif = e.target.checked; localStorage.setItem("mf_notif", S.notif ? "1" : "0"); };
   $("#cfgTema").onchange = e => {
     S.tema = e.target.checked ? "escuro" : "claro";
-    localStorage.setItem("mf_tema", S.tema);
-    aplicarTema();
+    localStorage.setItem("mf_tema", S.tema); aplicarTema();
   };
   $("#cfgRegras").onclick = () => modal({
     titulo: "Regras do Firestore",
@@ -2768,23 +2608,19 @@ service cloud.firestore {
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = `mesa-da-familia-backup-${hojeChave()}.json`;
-      a.click();
-      URL.revokeObjectURL(a.href);
+      a.click(); URL.revokeObjectURL(a.href);
       toast("Backup baixado 📦");
     } catch (e) { toast("Não deu pra exportar agora"); }
   };
   $("#cfgLogout").onclick = async () => {
     if (!await confirmar("Sair", "Você vai sair da mesa. Pode entrar de novo quando quiser.")) return;
-    sessionStorage.removeItem("mf_usuario");
-    fecharSala();
+    sessionStorage.removeItem("mf_usuario"); fecharSala();
     S.usuario = null; S.perfil = null;
     irPara("login");
   };
 }
 
-/* ============================================================
-   18. PWA — manifest, ícone em canvas, bloqueios de gesto
-   ============================================================ */
+/* 17. PWA */
 function gerarIcone() {
   const c = document.createElement("canvas");
   c.width = c.height = 512;
@@ -2800,12 +2636,8 @@ function montarPWA() {
   const icone = gerarIcone();
   $("#icone").href = icone;
   const manifest = {
-    name: APP_CONFIG.nome,
-    short_name: "Mesa",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#FBF7F0",
-    theme_color: "#FBF7F0",
+    name: APP_CONFIG.nome, short_name: "Mesa", start_url: ".",
+    display: "standalone", background_color: "#FBF7F0", theme_color: "#FBF7F0",
     orientation: "portrait",
     icons: [
       { src: icone, sizes: "192x192", type: "image/png", purpose: "any maskable" },
@@ -2831,19 +2663,8 @@ function bloquearGesto() {
     if (e.touches.length > 1) e.preventDefault();
   }, { passive: false });
 }
-async function notificar(titulo, corpo) {
-  if (!S.notif) return;
-  if (!("Notification" in window)) return;
-  if (Notification.permission === "granted") {
-    try { new Notification(titulo, { body: corpo, icon: $("#icone").href }); } catch (e) {}
-  } else if (Notification.permission === "default") {
-    try { await Notification.requestPermission(); } catch (e) {}
-  }
-}
 
-/* ============================================================
-   19. EVENTOS / BOOT
-   ============================================================ */
+/* 18. BOOT */
 function aplicarTema() {
   document.documentElement.classList.toggle("dark", S.tema === "escuro");
   $("#btnTema").innerHTML = S.tema === "escuro"
@@ -2856,14 +2677,10 @@ function carregarPreferencias() {
   aplicarTema();
 }
 function ligarEventosGlobais() {
-  $("#btnVoltar").onclick = () => {
-    if (S.tela === "jogo") { fecharSala(); }
-    irPara("home");
-  };
+  $("#btnVoltar").onclick = () => { if (S.tela === "jogo") fecharSala(); irPara("home"); };
   $("#btnTema").onclick = () => {
     S.tema = S.tema === "escuro" ? "claro" : "escuro";
-    localStorage.setItem("mf_tema", S.tema);
-    aplicarTema();
+    localStorage.setItem("mf_tema", S.tema); aplicarTema();
     if (S.tela === "placar") renderPlacar();
   };
   $("#btnChatTopo").onclick = () => {
@@ -2875,7 +2692,6 @@ function ligarEventosGlobais() {
   });
 }
 
-/* ---------- partida inicial ---------- */
 carregarPreferencias();
 ligarEventosGlobais();
 montarPWA();
